@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
-import { Menu, X, ArrowLeft, Brain, Film, Leaf, BarChart3, ShoppingBag } from 'lucide-react'
+import { Menu, X, ArrowLeft, Brain, Film, Leaf, BarChart3, ShoppingBag, Shield, TrendingUp, Zap, Mic, Bot, Star } from 'lucide-react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Sphere } from '@react-three/drei'
 import Image from 'next/image'
@@ -68,6 +68,44 @@ export default function HomePage() {
       icon: BarChart3, 
       image: "/images/services-img-4.png"
     }
+  ]
+
+  const secretProjects = [
+    {
+      name: "Comedy Industry Hub",
+      description: "Agentic content and business solution designed to become the future hub for everything comedy. Agent 2 Agent Ready.",
+      icon: Mic,
+      status: "Q1 2025"
+    },
+    {
+      name: "ARTI Companion Services", 
+      description: "Specialized robotics and adult companion services market with revolutionary branding strategy.",
+      icon: Bot,
+      status: "Strategic"
+    },
+    {
+      name: "Gen X Cult Classic Series",
+      description: "Hilarious comedy series with diverse cast, Curb-style dialogue. Under secrecy cloak.",
+      icon: Film,
+      status: "Production"
+    },
+    {
+      name: "Bruce Banana + Pixar Film",
+      description: "Animated series with 90s action references + future film with heavy-hitting star voices.",
+      icon: Star,
+      status: "Development"
+    }
+  ]
+
+  const domainPortfolio = [
+    { domain: 'libertadai.com', status: 'LAUNCHING' },
+    { domain: 'arti.diy', status: 'BUILDING' },
+    { domain: 'artintel.store', status: 'READY' },
+    { domain: 'automationagent.org', status: 'PLANNED' },
+    { domain: 'automationstation.org', status: 'PLANNED' },
+    { domain: 'artilove.online', status: 'BUILDING' },
+    { domain: 'artilove.live', status: 'READY' },
+    { domain: 'artisex.live', status: 'STRATEGIC' }
   ]
 
   const footerLinks = [
@@ -166,14 +204,40 @@ export default function HomePage() {
                 <motion.li
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.15 }}
                 >
                   <Link 
-                    href="/services" 
+                    href="#track-record" 
                     className="hover:text-[#f3e700] transition-colors block py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Services
+                    Track Record
+                  </Link>
+                </motion.li>
+                <motion.li
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Link 
+                    href="#secret-pipeline" 
+                    className="hover:text-[#f3e700] transition-colors block py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Secret Pipeline
+                  </Link>
+                </motion.li>
+                <motion.li
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                >
+                  <Link 
+                    href="#domain-empire" 
+                    className="hover:text-[#f3e700] transition-colors block py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Domain Empire
                   </Link>
                 </motion.li>
                 <motion.li
@@ -182,11 +246,11 @@ export default function HomePage() {
                   transition={{ delay: 0.3 }}
                 >
                   <Link 
-                    href="/shop-our-stores" 
+                    href="/services" 
                     className="hover:text-[#f3e700] transition-colors block py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Shop Our Stores
+                    Services
                   </Link>
                 </motion.li>
                 <motion.li
@@ -220,18 +284,178 @@ export default function HomePage() {
           }}
         >
           <section id="home" className="min-h-screen flex items-center justify-center px-4 relative">
-            <motion.h2 
-              className="text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
-              style={{
-                y: useTransform(scrollYProgress, [0, 0.5], [0, -50]),
-              }}
-            >
-              UNDER the SUN
-              <br />
-              <span className="text-lg md:text-4xl font-bold text-center leading-tight">
-                strategy for humanity
-              </span>
-            </motion.h2>
+            <div className="text-center">
+              {/* Credibility Badges - positioned above the main text */}
+              <motion.div 
+                className="mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <div className="inline-flex items-center px-4 py-2 bg-black/20 backdrop-blur-sm rounded-full border border-black/30 mb-4">
+                  <Shield className="w-4 h-4 mr-2 text-black" />
+                  <span className="text-sm font-medium">Nation-State Security Expert • 10x Revenue Multiplier</span>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <div className="inline-flex items-center px-3 py-1 bg-green-500/20 rounded-full border border-green-600/30">
+                    <TrendingUp className="w-3 h-3 mr-1 text-green-700" />
+                    <span className="text-xs font-semibold text-green-800">$50M → $500M</span>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-purple-500/20 rounded-full border border-purple-600/30">
+                    <Zap className="w-3 h-3 mr-1 text-purple-700" />
+                    <span className="text-xs font-semibold text-purple-800">4 Secret Projects</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.h2 
+                className="text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
+                style={{
+                  y: useTransform(scrollYProgress, [0, 0.5], [0, -50]),
+                }}
+              >
+                UNDER the SUN
+                <br />
+                <span className="text-lg md:text-4xl font-bold text-center leading-tight">
+                  strategy for humanity
+                </span>
+              </motion.h2>
+            </div>
+          </section>
+
+          {/* NEW: Track Record Section */}
+          <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <div className="container mx-auto max-w-6xl">
+              <motion.h3
+                className="text-3xl md:text-6xl font-bold mb-8 text-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Proven Track Record
+              </motion.h3>
+              
+              <div className="grid md:grid-cols-2 gap-8 mb-12">
+                <motion.div 
+                  className="bg-green-500/10 p-6 rounded-2xl border border-green-500/20"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <div className="flex items-center mb-4">
+                    <TrendingUp className="w-8 h-8 text-green-400 mr-3" />
+                    <h4 className="text-xl font-bold">Revenue Multiplication Expert</h4>
+                  </div>
+                  <p className="text-gray-300 mb-4">
+                    Pioneered, created and implemented hiring and training programs at CheapCaribbean.com during the Greatest Recession since the Great Depression.
+                  </p>
+                  <div className="text-2xl font-bold text-green-400 mb-1">$50M → $500M</div>
+                  <div className="text-sm text-green-300">10x growth in 5 years (2008-2013)</div>
+                </motion.div>
+
+                <motion.div 
+                  className="bg-red-500/10 p-6 rounded-2xl border border-red-500/20"
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <div className="flex items-center mb-4">
+                    <Shield className="w-8 h-8 text-red-400 mr-3" />
+                    <h4 className="text-xl font-bold">Cybersecurity Pioneer</h4>
+                  </div>
+                  <p className="text-gray-300 mb-4">
+                    Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices and platforms.
+                  </p>
+                  <div className="text-lg font-bold text-red-400 mb-1">Nation-State Level Threat Detection</div>
+                  <div className="text-sm text-red-300">Forensic analysis & unconventional discovery techniques</div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
+          {/* NEW: Secret Pipeline Section */}
+          <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/5">
+            <div className="container mx-auto max-w-6xl">
+              <motion.h3
+                className="text-3xl md:text-6xl font-bold mb-4 text-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Secret Project Pipeline
+              </motion.h3>
+              <motion.p 
+                className="text-center text-gray-300 mb-12 text-lg"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Four game-changing launches that will redefine entire industries
+              </motion.p>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {secretProjects.map((project, index) => (
+                  <motion.div 
+                    key={project.name}
+                    className="bg-gray-800/50 p-6 rounded-2xl border border-gray-600/30 hover:border-gray-500/50 transition-all"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <div className="flex items-center mb-4">
+                      <project.icon className="w-8 h-8 text-yellow-400 mr-3" />
+                      <h4 className="text-lg font-bold">{project.name}</h4>
+                      <span className="ml-auto text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
+                        {project.status}
+                      </span>
+                    </div>
+                    <p className="text-gray-300 text-sm">{project.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div 
+                className="text-center mt-12"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
+                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $50M+ Year 1</span>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* NEW: Domain Empire Section */}
+          <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <div className="container mx-auto max-w-6xl">
+              <motion.h3
+                className="text-3xl md:text-6xl font-bold mb-12 text-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Strategic Domain Portfolio
+              </motion.h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {domainPortfolio.map((item, index) => (
+                  <motion.div 
+                    key={item.domain}
+                    className="bg-gray-800/30 p-4 rounded-xl border border-gray-600/20 hover:border-gray-500/40 transition-all"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <div className="text-white font-semibold mb-2 text-sm">{item.domain}</div>
+                    <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 inline-block">
+                      {item.status}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </section>
 
           <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
