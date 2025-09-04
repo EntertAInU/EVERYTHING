@@ -33,7 +33,7 @@ export default function HomePage() {
   const { scrollYProgress } = useScroll()
 
   useEffect(() => {
-    const words = ['EVERYTHING', 'STRATEGY', 'ENTERTAINMENT', 'CREATING']
+    const words = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
     let index = 0
     const intervalId = setInterval(() => {
       index = (index + 1) % words.length
@@ -72,46 +72,46 @@ export default function HomePage() {
 
   const secretProjects = [
     {
-      name: "Comedy Industry Hub",
-      description: "Agentic content and business solution designed to become the future hub for everything comedy. Agent 2 Agent Ready.",
+      name: "Comedy Industry Disrupter",
+      description: "Agentic content and business solution designed to become the future for everything comedy. Uniquely positioned, Investor Ready.",
       icon: Mic,
-      status: "Q1 2025"
+      status: "Q1 2026 LAUNCH"
     },
     {
-      name: "ARTI Companion Services", 
-      description: "Specialized robotics and adult companion services market with revolutionary branding strategy.",
+      name: "Robotic Companions + Entertainment", 
+      description: "Specialized robotics for companion market with revolutionary branding strategy.",
       icon: Bot,
       status: "Strategic"
     },
     {
-      name: "Gen X Cult Classic Series",
+      name: "Gen X Cult Classic Inspired Series",
       description: "Hilarious comedy series with diverse cast, Curb-style dialogue. Under secrecy cloak.",
       icon: Film,
-      status: "Production"
+      status: "Funding + Pre-Production"
     },
     {
-      name: "Bruce Banana + Pixar Film",
-      description: "Animated series with 90s action references + future film with heavy-hitting star voices.",
+      name: "HILARIOUS Animated Series + Brilliant Feature Film",
+      description: "Animated comedy cartoon series with 90s action references + feature film with heavy-hitting star voices and Pixar-like messaging.",
       icon: Star,
-      status: "Development"
+      status: "Pre-production"
     }
   ]
 
   const domainPortfolio = [
-    { domain: 'libertadai.com', status: 'LAUNCHING' },
+    { domain: 'libertadai.com', status: 'LAUNCHED' },
     { domain: 'arti.diy', status: 'BUILDING' },
-    { domain: 'artintel.store', status: 'READY' },
-    { domain: 'automationagent.org', status: 'PLANNED' },
-    { domain: 'automationstation.org', status: 'PLANNED' },
+    { domain: 'artintel.store', status: 'LAUNCHING' },
+    { domain: 'automationagent.org', status: 'READY' },
+    { domain: 'automationstation.org', status: 'LAUNCHING' },
     { domain: 'artilove.online', status: 'BUILDING' },
-    { domain: 'artilove.live', status: 'READY' },
+    { domain: 'artilove.live', status: 'STRATEGIC' },
     { domain: 'artisex.live', status: 'STRATEGIC' }
   ]
 
   const footerLinks = [
     { name: 'Press', href: '/press' },
     { name: 'Investors', href: '/investors' },
-    { name: 'Email', href: 'mailto:info@everythingunderthesun.com' },
+    { name: 'Email', href: 'mailto:wannabang@bangrobots.com' },
     { name: 'Shop Our Stores', href: '/shop-our-stores' }
   ]
 
@@ -390,7 +390,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Four game-changing launches that will redefine entire industries
+                Four game-changing launches. Some will redefine entire industries.
               </motion.p>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -421,7 +421,7 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
-                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $50M+ Year 1</span>
+                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $20M+ Year 1 $200M+ Year 3</span>
                 </div>
               </motion.div>
             </div>
@@ -475,10 +475,10 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <p>
-                  Everything Under the Sun (EUtS) is a visionary company building brands, creative strategies, and developing technology solutions. We help others excel while harnessing the power of AI and ML to drive even more impressive solutions.
+                  Everything Under the Sun (EUtS) founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. We help others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations.
                 </p>
                 <p>
-                  We love brands and people who are great at what they do while committed to our mission: helping humanity and our planet heal so we can all thrive.
+                  We love brands and people who are great at what they do while committed to our mission: helping humanity and our planet improve so we can all thrive. Using Comedy and defining how data can be used for good are a couple of ways we help best.
                 </p>
                 <p>
                   Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions.
@@ -543,7 +543,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div className="mb-8 md:mb-0">
               <h4 className="text-xl md:text-2xl font-bold mb-4">Everything Under the Sun</h4>
-              <p className="text-sm md:text-base">© 2024 Everything Under the Sun. All rights reserved.</p>
+              <p className="text-sm md:text-base">© 2025 Everything Under the Sun. All rights reserved.</p>
             </div>
             <nav>
               <ul className="space-y-2">
