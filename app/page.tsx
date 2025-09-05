@@ -5,13 +5,12 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Menu, X, ArrowLeft, Brain, Film, Leaf, BarChart3, ShoppingBag, Shield, TrendingUp, Zap, Mic, Bot, Star, Calendar, Mail, MessageSquare, Phone } from 'lucide-react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Sphere } from '@react-three/drei'
-import Image from 'next/image'
-import Link from 'next/link'
 
 const Sun = () => {
   const meshRef = useRef()
   useFrame((state, delta) => {
     meshRef.current.rotation.y += delta * 0.2
+    meshRef.current.rotation.z += delta * 0.1
   })
 
   return (
@@ -19,11 +18,86 @@ const Sun = () => {
       <meshPhongMaterial 
         color="#FFDF0E" 
         emissive="#FFDF0E" 
-        emissiveIntensity={0.7}
+        emissiveIntensity={0.8}
         specular="#ffffff"
-        shininess={3}
+        shininess={5}
       />
     </Sphere>
+  )
+}
+
+// Celebration Component for Logo Click
+const CelebrationOverlay = ({ isVisible, onComplete }) => {
+  const [showJustKidding, setShowJustKidding] = useState(false)
+
+  useEffect(() => {
+    if (isVisible) {
+      const timer1 = setTimeout(() => {
+        setShowJustKidding(true)
+      }, 2000)
+      
+      const timer2 = setTimeout(() => {
+        onComplete()
+        setShowJustKidding(false)
+      }, 4000)
+
+      return () => {
+        clearTimeout(timer1)
+        clearTimeout(timer2)
+      }
+    }
+  }, [isVisible, onComplete])
+
+  if (!isVisible) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] bg-gradient-to-br from-yellow-400 to-orange-500 flex flex-col items-center justify-center"
+    >
+      {/* Confetti */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(50)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 rounded-full"
+            style={{
+              backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'][i % 5],
+              left: `${Math.random() * 100}%`,
+              top: '-10px'
+            }}
+            animate={{
+              y: '110vh',
+              rotate: 360,
+              x: [0, Math.random() * 100 - 50]
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              delay: Math.random() * 2,
+              repeat: Infinity
+            }}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        className="text-black font-bold text-4xl md:text-6xl text-center mb-4"
+      >
+        {showJustKidding ? "JUST KIDDING!" : "CONGRATULATIONS! YOU ARE..."}
+      </motion.div>
+      
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-black font-semibold text-xl md:text-2xl text-center"
+      >
+        {showJustKidding ? "Welcome to Everything Under the Sun!" : "THE LUCKIEST PERSON ALIVE!"}
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -38,7 +112,6 @@ const FilmCountdown = ({ onComplete }) => {
       if (count > 1) {
         setCount(count - 1)
       } else if (count === 1) {
-        // Show spinning animation instead of "1"
         setCount(0)
         setTimeout(() => {
           setShowEverything(true)
@@ -64,7 +137,6 @@ const FilmCountdown = ({ onComplete }) => {
         background: 'radial-gradient(circle, #1a1a1a 0%, #000000 100%)',
       }}
     >
-      {/* Film grain effect */}
       <div 
         className="absolute inset-0 opacity-30"
         style={{
@@ -72,7 +144,6 @@ const FilmCountdown = ({ onComplete }) => {
         }}
       />
       
-      {/* Countdown numbers */}
       <AnimatePresence mode="wait">
         {count > 0 && (
           <motion.div
@@ -96,7 +167,6 @@ const FilmCountdown = ({ onComplete }) => {
           </motion.div>
         )}
         
-        {/* Spinning animation instead of "1" */}
         {count === 0 && !showEverything && (
           <motion.div
             initial={{ scale: 0, rotate: 0 }}
@@ -120,7 +190,6 @@ const FilmCountdown = ({ onComplete }) => {
           </motion.div>
         )}
         
-        {/* EVERYTHING text */}
         {showEverything && (
           <motion.div
             initial={{ scale: 0, opacity: 0, rotateY: -90 }}
@@ -140,35 +209,6 @@ const FilmCountdown = ({ onComplete }) => {
           </motion.div>
         )}
       </AnimatePresence>
-      
-      {/* Vintage film scratches */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          animate={{ 
-            x: [-10, 10, -5, 15, -10],
-            opacity: [0.1, 0.3, 0.1, 0.4, 0.1]
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-          className="absolute top-0 left-1/4 w-0.5 h-full bg-white opacity-20"
-        />
-        <motion.div
-          animate={{ 
-            x: [5, -8, 12, -3, 5],
-            opacity: [0.2, 0.1, 0.3, 0.1, 0.2]
-          }}
-          transition={{ 
-            duration: 1.5,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 0.5
-          }}
-          className="absolute top-0 right-1/3 w-px h-full bg-white opacity-15"
-        />
-      </div>
     </motion.div>
   )
 }
@@ -191,29 +231,13 @@ const ContactModal = ({ isOpen, onClose }) => {
     setSubmitStatus(null)
 
     try {
-      // In production, replace this with your actual API endpoint
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          source: 'homepage_contact_form'
-        }),
-      })
-
-      if (response.ok) {
-        setSubmitStatus('success')
-        setTimeout(() => {
-          onClose()
-          setFormData({ name: '', email: '', company: '', purpose: '', details: '' })
-          setSubmitStatus(null)
-        }, 2000)
-      } else {
-        throw new Error('Network response was not ok')
-      }
+      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+      setSubmitStatus('success')
+      setTimeout(() => {
+        onClose()
+        setFormData({ name: '', email: '', company: '', purpose: '', details: '' })
+        setSubmitStatus(null)
+      }, 2000)
     } catch (error) {
       console.error('Contact form submission error:', error)
       setSubmitStatus('error')
@@ -355,13 +379,27 @@ export default function HomePage() {
   const [hoveredBadge, setHoveredBadge] = useState(null)
   const [showCountdown, setShowCountdown] = useState(true)
   const [siteLoaded, setSiteLoaded] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [aboutExpanded, setAboutExpanded] = useState(false)
   const { scrollYProgress } = useScroll()
 
-  // Rotating words array
+  // Scroll-based background color transform
+  const backgroundColor = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    [
+      'rgb(243, 231, 0)', // Yellow
+      'rgb(255, 140, 0)', // Orange
+      'rgb(255, 69, 0)',  // Red-orange
+      'rgb(138, 43, 226)', // Blue-violet
+      'rgb(75, 0, 130)',   // Indigo
+      'rgb(0, 0, 0)'       // Black
+    ]
+  )
+
   const rotatingWords = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
 
   useEffect(() => {
-    // Only start the rotating text after countdown is complete
     if (!siteLoaded) return
     
     let index = 0
@@ -378,6 +416,15 @@ export default function HomePage() {
     setTimeout(() => setSiteLoaded(true), 100)
   }
 
+  const handleLogoClick = () => {
+    setShowCelebration(true)
+  }
+
+  const handleCelebrationComplete = () => {
+    setShowCelebration(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
     if (element) {
@@ -390,26 +437,22 @@ export default function HomePage() {
     { 
       name: "AI R&D Studio Lab", 
       description: "Predictive AI/ML R&D Anticipating Trends, Brand Customization & Award Winning Consulting", 
-      icon: Brain, 
-      image: "/images/services-img-1.png"
+      icon: Brain
     },
     { 
       name: "Film & Music Production", 
       description: "Film, Music & Digital Content Production Studio and Elite Talent Management", 
-      icon: Film, 
-      image: "/images/services-img-2.png"
+      icon: Film
     },
     { 
       name: "Sustainable Tech Initiative", 
       description: "Eco-conscious Disruptor Technology launching visionary solutions from Conception to Market", 
-      icon: Leaf, 
-      image: "/images/services-img-3.png"
+      icon: Leaf
     },
     { 
       name: "Marketing Strategy & Ad Creation", 
       description: "Creative Hub Proving Superior Personalized Data Sourcing and Research Achieves Any Goal For Any Brand", 
-      icon: BarChart3, 
-      image: "/images/services-img-4.png"
+      icon: BarChart3
     }
   ]
 
@@ -451,14 +494,6 @@ export default function HomePage() {
     { domain: 'artisex.live', status: 'STRATEGIC' }
   ]
 
-  const footerLinks = [
-    { name: 'Press', href: '#' },
-    { name: 'Investors', href: '#' },
-    { name: 'Contact', href: '#' },
-    { name: 'Join The Ride', href: '#' }
-  ]
-
-  // Enhanced credibility badges with interactivity
   const credibilityBadges = [
     {
       id: 'security',
@@ -475,8 +510,8 @@ export default function HomePage() {
       id: 'revenue',
       icon: TrendingUp,
       title: '$50M → $500M Revenue Growth',
-      subtitle: '10x Multiplier Expert',
-      description: 'Pioneered training programs at CheapCaribbean.com during the Great Recession, achieving unprecedented 10x growth.',
+      subtitle: 'Expert Growth Strategist',
+      description: 'Pioneered training programs at CheapCaribbean.com during the Great Recession, achieving unprecedented growth.',
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10',
       borderColor: 'border-yellow-500/30',
@@ -488,7 +523,7 @@ export default function HomePage() {
       icon: Zap,
       title: '4 Secret Projects Launching',
       subtitle: 'Industry Disruption Ready',
-      description: 'Revolutionary ventures across comedy, AI companions, entertainment, and animation with massive 9 figure revenue growth forecasted',
+      description: 'Revolutionary ventures across comedy, AI companions, entertainment, and animation with massive revenue growth forecasted',
       color: 'text-purple-400',
       bgColor: 'bg-purple-500/10',
       borderColor: 'border-purple-500/20',
@@ -496,16 +531,29 @@ export default function HomePage() {
     }
   ]
 
+  // Enhanced sun animation bubbles that appear sequentially
+  const sunBubbles = [
+    { text: "Track Records", delay: 0 },
+    { text: "Secret Projects", delay: 2000 },
+    { text: "Hidden Gems", delay: 4000 }
+  ]
+
   return (
-    <div className="bg-[#f3e700] text-black min-h-screen font-sans">
-      {/* Film Countdown Intro */}
+    <motion.div 
+      className="text-black min-h-screen font-sans"
+      style={{ backgroundColor }}
+    >
       <AnimatePresence>
         {showCountdown && (
           <FilmCountdown onComplete={handleCountdownComplete} />
         )}
       </AnimatePresence>
 
-      {/* Main Site Content - Hidden until countdown completes */}
+      <CelebrationOverlay 
+        isVisible={showCelebration} 
+        onComplete={handleCelebrationComplete} 
+      />
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: siteLoaded ? 1 : 0 }}
@@ -514,10 +562,12 @@ export default function HomePage() {
       >
         <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
         
+        {/* Enhanced 3D Sun */}
         <div className="fixed inset-0 z-10 pointer-events-none" style={{ opacity: useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1, 0.3, 0.3, 1]) }}>
           <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
+            <ambientLight intensity={0.6} />
+            <pointLight position={[10, 10, 10]} intensity={1.2} />
+            <pointLight position={[-10, -10, -10]} intensity={0.8} color="#ff6600" />
             <Sun />
           </Canvas>
         </div>
@@ -528,27 +578,20 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-xl md:text-2xl font-bold text-white"
+              className="text-xl md:text-2xl font-bold text-white cursor-pointer"
+              onClick={handleLogoClick}
             >
               <span className="block">{headerText}</span>
               <span className="block text-base md:text-lg">Under.the.Sun.</span>
             </motion.h1>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="absolute top-4 right-4 text-white p-2"
+              className="absolute top-4 right-4 text-white p-2 w-16 h-12 flex flex-col justify-center items-center"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={isMenuOpen ? 'close' : 'open'}
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </motion.div>
-              </AnimatePresence>
+              <div className={`w-8 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></div>
+              <div className={`w-8 h-0.5 bg-white transition-all mt-1 ${isMenuOpen ? 'opacity-0' : ''}`}></div>
+              <div className={`w-8 h-0.5 bg-white transition-all mt-1 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></div>
             </button>
           </div>
         </header>
@@ -566,7 +609,6 @@ export default function HomePage() {
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="text-white mb-8 flex items-center"
-                  aria-label="Back to main content"
                 >
                   <ArrowLeft size={24} className="mr-2" />
                   Back
@@ -574,37 +616,37 @@ export default function HomePage() {
                 <ul className="space-y-6 text-2xl md:text-3xl font-bold">
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
                     <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Home
+                      Sun with Bubbles
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                     <button onClick={() => scrollToSection('about')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      About
+                      About Us
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                    <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Track Record
+                    <button onClick={() => scrollToSection('services')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Our Services
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                    <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Secret Pipeline
+                    <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Strategic Domain Portfolio
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-                    <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Domain Empire
+                    <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Proven Track Record
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                    <button onClick={() => scrollToSection('services')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Services
+                    <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Secret Slate Project Pipeline
                     </button>
                   </motion.li>
-                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                    <button onClick={() => setIsContactOpen(true)} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Contact
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+                    <button onClick={() => scrollToSection('contact-cta')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Ready for Everything?
                     </button>
                   </motion.li>
                 </ul>
@@ -620,12 +662,47 @@ export default function HomePage() {
               backgroundColor: useTransform(
                 scrollYProgress,
                 [0.2, 0.3, 0.6, 0.7],
-                ['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']
+                ['rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0)']
               ),
             }}
           >
-            <section id="home" className="min-h-screen flex items-center justify-center px-4 relative">
-              <div className="text-center">
+            {/* Hero Section with Sequential Bubbles */}
+            <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+              <div className="text-center relative">
+                {/* Sequential Animation Bubbles */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {sunBubbles.map((bubble, index) => (
+                    <motion.div
+                      key={bubble.text}
+                      className="absolute bg-white/10 backdrop-blur-sm border-2 border-yellow-400/50 rounded-full px-4 py-2 text-white font-bold text-sm cursor-pointer pointer-events-auto"
+                      style={{
+                        top: index === 0 ? '20%' : index === 1 ? '60%' : '80%',
+                        left: index === 0 ? '70%' : index === 1 ? '10%' : '75%',
+                      }}
+                      initial={{ opacity: 0, scale: 0, y: 50 }}
+                      animate={{ 
+                        opacity: [0, 0, 1, 1, 0],
+                        scale: [0, 0, 1, 1, 0.8],
+                        y: [50, 50, 0, 0, -20]
+                      }}
+                      transition={{
+                        duration: 6,
+                        delay: bubble.delay / 1000,
+                        times: [0, 0.1, 0.3, 0.8, 1],
+                        repeat: Infinity,
+                        repeatDelay: 6
+                      }}
+                      onClick={() => {
+                        if (bubble.text === "Track Records") scrollToSection('track-record')
+                        if (bubble.text === "Secret Projects") scrollToSection('secret-pipeline')
+                        if (bubble.text === "Hidden Gems") scrollToSection('about')
+                      }}
+                    >
+                      {bubble.text}
+                    </motion.div>
+                  ))}
+                </div>
+
                 {/* Enhanced Interactive Credibility Badges */}
                 <motion.div 
                   className="mb-8"
@@ -655,7 +732,6 @@ export default function HomePage() {
                             </div>
                           </div>
                           
-                          {/* Hover tooltip */}
                           <AnimatePresence>
                             {hoveredBadge === badge.id && (
                               <motion.div
@@ -690,7 +766,122 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Enhanced Track Record Section with Better Contrast */}
+            {/* About Us Section - Moved up as requested */}
+            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/60">
+              <div className="container mx-auto max-w-4xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-6 md:mb-8"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  About Us
+                </motion.h3>
+                <motion.div
+                  className="text-base md:text-xl mb-6 md:mb-8"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <p className="mb-4">
+                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
+                  </p>
+                  
+                  <div className={`overflow-hidden transition-all duration-500 ${aboutExpanded ? 'max-h-96' : 'max-h-0'}`}>
+                    <p className="mb-4">
+                      We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
+                    </p>
+                    <p className="mb-4">
+                      Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need.
+                    </p>
+                  </div>
+                  
+                  <button
+                    onClick={() => setAboutExpanded(!aboutExpanded)}
+                    className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105"
+                  >
+                    {aboutExpanded ? 'Read Less' : 'Read More'}
+                  </button>
+                </motion.div>
+              </div>
+            </section>
+
+            {/* Services Section */}
+            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20 bg-black/50">
+              <div className="text-center">
+                <motion.h3 
+                  className="text-3xl md:text-6xl font-bold mb-8 text-white"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Our Services
+                </motion.h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+                  {services.map((service, index) => (
+                    <motion.div 
+                      key={service.name} 
+                      className="bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 border border-yellow-400/20"
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <service.icon className="w-12 h-12 md:w-16 md:h-16 mb-4 text-black" />
+                      <h4 className="text-xl md:text-2xl font-bold mb-3 text-black">{service.name}</h4>
+                      <p className="text-sm md:text-base text-gray-800 mb-4 leading-relaxed">{service.description}</p>
+                      <button 
+                        onClick={() => setIsContactOpen(true)}
+                        className="mt-4 bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105"
+                      >
+                        Learn More
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Strategic Domain Portfolio */}
+            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/70">
+              <div className="container mx-auto max-w-6xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-12 text-center"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Strategic Domain Portfolio
+                </motion.h3>
+
+                <motion.p
+                  className="text-center text-gray-300 mb-12 text-lg max-w-3xl mx-auto"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Our carefully curated collection of premium domains positions us at the forefront of emerging markets and technologies. Each acquisition represents a strategic investment in the future of digital innovation.
+                </motion.p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {domainPortfolio.map((item, index) => (
+                    <motion.div 
+                      key={item.domain}
+                      className="bg-gray-800/30 p-4 rounded-xl border border-gray-600/20 hover:border-gray-500/40 transition-all"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <div className="text-white font-semibold mb-2 text-sm">{item.domain}</div>
+                      <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 inline-block">
+                        {item.status}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Proven Track Record Section */}
             <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/90 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3
@@ -717,7 +908,7 @@ export default function HomePage() {
                       Pioneered, created and implemented hiring and training programs at CheapCaribbean.com during the Greatest Recession since the Great Depression.
                     </p>
                     <div className="text-2xl font-bold text-yellow-400 mb-1">$50M → $500M</div>
-                    <div className="text-sm text-yellow-300">10x growth in 5 years (2008-2013)</div>
+                    <div className="text-sm text-yellow-300">Growth achieved in 5 years (2008-2013)</div>
                   </motion.div>
 
                   <motion.div 
@@ -794,101 +985,7 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Domain Empire Section */}
-            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/70">
-              <div className="container mx-auto max-w-6xl">
-                <motion.h3
-                  className="text-3xl md:text-6xl font-bold mb-12 text-center"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  Strategic Domain Portfolio
-                </motion.h3>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {domainPortfolio.map((item, index) => (
-                    <motion.div 
-                      key={item.domain}
-                      className="bg-gray-800/30 p-4 rounded-xl border border-gray-600/20 hover:border-gray-500/40 transition-all"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                    >
-                      <div className="text-white font-semibold mb-2 text-sm">{item.domain}</div>
-                      <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 inline-block">
-                        {item.status}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/60">
-              <div className="container mx-auto max-w-4xl">
-                <motion.h3
-                  className="text-3xl md:text-6xl font-bold mb-6 md:mb-8"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  About Us
-                </motion.h3>
-                <motion.div
-                  className="text-base md:text-xl mb-6 md:mb-8 space-y-4"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <p>
-                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
-                  </p>
-                  <p>
-                    We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
-                  </p>
-                  <p>
-                    Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need .
-                  </p>
-                </motion.div>
-              </div>
-            </section>
-
-            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20 bg-black/50">
-              <div className="text-center">
-                <motion.h3 
-                  className="text-3xl md:text-6xl font-bold mb-8 text-white"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  Our Services
-                </motion.h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                  {services.map((service, index) => (
-                    <motion.div 
-                      key={service.name} 
-                      className="bg-gray-200 flex flex-col items-center justify-center p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
-                      initial={{ opacity: 0, y: 50 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <service.icon className="w-12 h-12 md:w-16 md:h-16 mb-4 text-black" />
-                      <h4 className="text-xl md:text-2xl font-bold mb-2 text-black">{service.name}</h4>
-                      <p className="text-sm md:text-base text-black mb-4">{service.description}</p>
-                      <button 
-                        onClick={() => setIsContactOpen(true)}
-                        className="mt-4 inline-block bg-black text-white px-4 py-2 rounded-full font-bold hover:bg-opacity-80 transition-colors"
-                      >
-                        Get Started
-                      </button>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* NEW: Sales Funnel CTA Section with Dynamic Text */}
+            {/* Ready for Everything Section - Updated CTA */}
             <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/40 text-white">
               <div className="container mx-auto max-w-4xl text-center">
                 <motion.h3
@@ -897,7 +994,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  Ready to 10x Your Business?
+                  Ready for Everything?
                 </motion.h3>
                 
                 <motion.p 
@@ -923,7 +1020,7 @@ export default function HomePage() {
                   <div className="bg-gray-800/50 p-6 rounded-xl">
                     <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-4" />
                     <h4 className="text-lg font-bold mb-2">Proven Growth Methods</h4>
-                    <p className="text-gray-300 text-sm">Battle-tested approaches that delivered 10x growth during recession</p>
+                    <p className="text-gray-300 text-sm">Battle-tested approaches that delivered growth during recession</p>
                   </div>
                   <div className="bg-gray-800/50 p-6 rounded-xl">
                     <Zap className="w-12 h-12 text-purple-400 mx-auto mb-4" />
@@ -941,13 +1038,10 @@ export default function HomePage() {
                     onClick={() => setIsContactOpen(true)}
                     className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
                   >
-                    Book Your {headerText} Call
+                    Let's Build Together
                   </button>
                   <p className="text-sm text-gray-400 mt-4">
-                    Custom pricing • Optimized solutions • Results GUARANTEED
-                  </p>
-                  <p className="text-sm text-gray-400 mt-4">
-                    Imagine having {headerText} Under the Sun. With us, you've won.
+                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it happen.
                   </p>
                 </motion.div>
               </div>
@@ -955,7 +1049,7 @@ export default function HomePage() {
           </motion.div>
         </main>
 
-        <div id="shop-our-stores" className="bg-[#f3e700] relative z-10">
+        <div id="shop-our-stores" className="relative z-10" style={{ backgroundColor: useTransform(scrollYProgress, [0.95, 1], ['rgb(243, 231, 0)', 'rgb(243, 231, 0)']) }}>
           <div className="container mx-auto px-4 py-12">
             <button
               onClick={() => setIsContactOpen(true)}
@@ -976,9 +1070,9 @@ export default function HomePage() {
               </div>
               <nav>
                 <ul className="space-y-2">
-                  {footerLinks.map((item, index) => (
+                  {['Press', 'Investors', 'Contact', 'Join The Ride'].map((item, index) => (
                     <motion.li 
-                      key={item.name}
+                      key={item}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -987,7 +1081,7 @@ export default function HomePage() {
                         onClick={() => setIsContactOpen(true)}
                         className="hover:text-[#f3e700] transition-colors text-sm md:text-base"
                       >
-                        {item.name}
+                        {item}
                       </button>
                     </motion.li>
                   ))}
@@ -997,6 +1091,6 @@ export default function HomePage() {
           </div>
         </footer>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
