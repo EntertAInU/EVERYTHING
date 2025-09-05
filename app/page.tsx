@@ -36,14 +36,44 @@ const ContactModal = ({ isOpen, onClose }) => {
     purpose: '',
     details: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(null)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // For now, just log the data - you can integrate with your preferred service
-    console.log('Contact form submitted:', formData)
-    alert('Thank you for your inquiry! We\'ll be in touch soon.')
-    onClose()
-    setFormData({ name: '', email: '', company: '', purpose: '', details: '' })
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+
+    try {
+      // In production, replace this with your actual API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          timestamp: new Date().toISOString(),
+          source: 'homepage_contact_form'
+        }),
+      })
+
+      if (response.ok) {
+        setSubmitStatus('success')
+        setTimeout(() => {
+          onClose()
+          setFormData({ name: '', email: '', company: '', purpose: '', details: '' })
+          setSubmitStatus(null)
+        }, 2000)
+      } else {
+        throw new Error('Network response was not ok')
+      }
+    } catch (error) {
+      console.error('Contact form submission error:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!isOpen) return null
@@ -71,15 +101,36 @@ const ContactModal = ({ isOpen, onClose }) => {
             </button>
           </div>
 
+          {submitStatus === 'success' && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"
+            >
+              Thank you! We'll be in touch soon.
+            </motion.div>
+          )}
+
+          {submitStatus === 'error' && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+            >
+              Sorry, there was an error. Please try again or contact us directly.
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
               <input
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
                 value={formData.name}
                 onChange={e => setFormData({...formData, name: e.target.value})}
+                disabled={isSubmitting}
               />
             </div>
             
@@ -88,9 +139,10 @@ const ContactModal = ({ isOpen, onClose }) => {
               <input
                 type="email"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -98,9 +150,10 @@ const ContactModal = ({ isOpen, onClose }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
                 value={formData.company}
                 onChange={e => setFormData({...formData, company: e.target.value})}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -108,9 +161,10 @@ const ContactModal = ({ isOpen, onClose }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Purpose of Contact *</label>
               <select
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
                 value={formData.purpose}
                 onChange={e => setFormData({...formData, purpose: e.target.value})}
+                disabled={isSubmitting}
               >
                 <option value="">Select a purpose</option>
                 <option value="ai-consulting">AI/ML Consulting</option>
@@ -126,18 +180,20 @@ const ContactModal = ({ isOpen, onClose }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Project Details</label>
               <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 h-24 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 h-24 resize-none transition-colors"
                 placeholder="Tell us about your project, goals, or how we can help..."
                 value={formData.details}
                 onChange={e => setFormData({...formData, details: e.target.value})}
+                disabled={isSubmitting}
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-4 rounded-md transition-colors"
+              disabled={isSubmitting}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-black font-bold py-3 px-4 rounded-md transition-colors disabled:cursor-not-allowed"
             >
-              Send Inquiry
+              {isSubmitting ? 'Sending...' : 'Send Inquiry'}
             </button>
           </form>
         </motion.div>
@@ -153,12 +209,14 @@ export default function HomePage() {
   const [hoveredBadge, setHoveredBadge] = useState(null)
   const { scrollYProgress } = useScroll()
 
+  // Rotating words array
+  const rotatingWords = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
+
   useEffect(() => {
-    const words = ['EVERYTHING', 'STRATEGY', 'ENTERTAINMENT', 'CREATING']
     let index = 0
     const intervalId = setInterval(() => {
-      index = (index + 1) % words.length
-      setHeaderText(words[index])
+      index = (index + 1) % rotatingWords.length
+      setHeaderText(rotatingWords[index])
     }, 5000)
 
     return () => clearInterval(intervalId)
@@ -201,47 +259,47 @@ export default function HomePage() {
 
   const secretProjects = [
     {
-      name: "Comedy Industry Hub",
-      description: "Agentic content and business solution designed to become the future hub for everything comedy. Agent 2 Agent Ready.",
+      name: "Comedy Industry Disrupter",
+      description: "Agentic content and business solution designed to become the future for everything comedy. Uniquely positioned, Investor Ready.",
       icon: Mic,
-      status: "Q1 2025"
+      status: "Q1 2026 LAUNCH"
     },
     {
-      name: "ARTI Companion Services", 
-      description: "Specialized robotics and adult companion services market with revolutionary branding strategy.",
+      name: "Robotic Companions + Entertainment", 
+      description: "Specialized robotics for companion market with revolutionary branding and revenue growth strategy.",
       icon: Bot,
       status: "Strategic"
     },
     {
-      name: "Gen X Cult Classic Series",
+      name: "Gen X Cult Classic Inspired Comedy Series",
       description: "Hilarious comedy series with diverse cast, Curb-style dialogue. Under secrecy cloak.",
       icon: Film,
-      status: "Production"
+      status: "Funding + Development"
     },
     {
-      name: "Bruce Banana + Pixar Film",
-      description: "Animated series with 90s action references + future film with heavy-hitting star voices.",
+      name: "HILARIOUS Animated Series + Brilliant Feature Film",
+      description: "Animated comedy cartoon series with 90s action references + feature film with heavy-hitting star voices and Pixar-like messaging.",
       icon: Star,
-      status: "Development"
+      status: "Pre-production"
     }
   ]
 
   const domainPortfolio = [
-    { domain: 'libertadai.com', status: 'LAUNCHING' },
+    { domain: 'libertadai.com', status: 'LAUNCHED' },
     { domain: 'arti.diy', status: 'BUILDING' },
-    { domain: 'artintel.store', status: 'READY' },
-    { domain: 'automationagent.org', status: 'PLANNED' },
-    { domain: 'automationstation.org', status: 'PLANNED' },
+    { domain: 'artintel.store', status: 'LAUNCHING' },
+    { domain: 'automationagent.org', status: 'READY' },
+    { domain: 'automationstation.org', status: 'LAUNCHING' },
     { domain: 'artilove.online', status: 'BUILDING' },
-    { domain: 'artilove.live', status: 'READY' },
+    { domain: 'artilove.live', status: 'STRATEGIC' },
     { domain: 'artisex.live', status: 'STRATEGIC' }
   ]
 
   const footerLinks = [
     { name: 'Press', href: '#' },
     { name: 'Investors', href: '#' },
-    { name: 'Email', href: '#' },
-    { name: 'Shop Our Stores', href: '#' }
+    { name: 'Contact', href: '#' },
+    { name: 'Join The Ride', href: '#' }
   ]
 
   // Enhanced credibility badges with interactivity
@@ -274,7 +332,7 @@ export default function HomePage() {
       icon: Zap,
       title: '4 Secret Projects Launching',
       subtitle: 'Industry Disruption Ready',
-      description: 'Revolutionary ventures across comedy, AI companions, entertainment, and animation with $50M+ projected Year 1 revenue.',
+      description: 'Revolutionary ventures across comedy, AI companions, entertainment, and animation with massive 9 figure revenue growth forecasted',
       color: 'text-purple-400',
       bgColor: 'bg-purple-500/10',
       borderColor: 'border-purple-500/20',
@@ -521,7 +579,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Secret Project Pipeline
+                Secret Slate Project Pipeline
               </motion.h3>
               <motion.p 
                 className="text-center text-gray-300 mb-12 text-lg"
@@ -529,7 +587,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Four game-changing launches that will redefine entire industries
+                Four game-changing launches. Some will redefine entire industries.
               </motion.p>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -560,7 +618,7 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
-                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $50M+ Year 1</span>
+                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $40M+ Year 1 $200M+ Year 3</span>
                 </div>
               </motion.div>
             </div>
@@ -614,13 +672,13 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <p>
-                  Everything Under the Sun (EUtS) is a visionary company building brands, creative strategies, and developing technology solutions. We help others excel while harnessing the power of AI and ML to drive even more impressive solutions.
+                  Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
                 </p>
                 <p>
-                  We love brands and people who are great at what they do while committed to our mission: helping humanity and our planet heal so we can all thrive.
+                  We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
                 </p>
                 <p>
-                  Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions.
+                  Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need .
                 </p>
               </motion.div>
             </div>
@@ -660,7 +718,7 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* NEW: Sales Funnel CTA Section */}
+          {/* NEW: Sales Funnel CTA Section with Dynamic Text */}
           <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/40 text-white">
             <div className="container mx-auto max-w-4xl text-center">
               <motion.h3
@@ -713,10 +771,13 @@ export default function HomePage() {
                   onClick={() => setIsContactOpen(true)}
                   className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
                 >
-                  Book Your Strategy Session
+                  Book Your {headerText} Call
                 </button>
                 <p className="text-sm text-gray-400 mt-4">
-                  Custom pricing • Optimized solutions • Results guaranteed
+                  Custom pricing • Optimized solutions • Results GUARANTEED
+                </p>
+                <p className="text-sm text-gray-400 mt-4">
+                  Imagine having {headerText} Under the Sun. With us, you've won.
                 </p>
               </motion.div>
             </div>
@@ -731,7 +792,7 @@ export default function HomePage() {
             className="w-full md:w-auto px-8 py-4 bg-black text-white rounded-full text-lg font-bold flex items-center justify-center hover:bg-opacity-80 transition-all duration-300"
           >
             <ShoppingBag className="mr-2" />
-            Browse Our Shops
+            Shop Our Store
           </button>
         </div>
       </div>
@@ -763,8 +824,9 @@ export default function HomePage() {
               </ul>
             </nav>
           </div>
+          </div>
         </div>
-      </footer>
+      </motion.div>
     </div>
   )
 }
