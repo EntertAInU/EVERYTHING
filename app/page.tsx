@@ -27,6 +27,152 @@ const Sun = () => {
   )
 }
 
+// Retro Film Countdown Component
+const FilmCountdown = ({ onComplete }) => {
+  const [count, setCount] = useState(3)
+  const [showEverything, setShowEverything] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (count > 1) {
+        setCount(count - 1)
+      } else if (count === 1) {
+        // Show spinning animation instead of "1"
+        setCount(0)
+        setTimeout(() => {
+          setShowEverything(true)
+          setTimeout(() => {
+            setIsComplete(true)
+            setTimeout(onComplete, 300)
+          }, 1000)
+        }, 800)
+      }
+    }, 800)
+
+    return () => clearTimeout(timer)
+  }, [count, onComplete])
+
+  if (isComplete) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+      style={{
+        background: 'radial-gradient(circle, #1a1a1a 0%, #000000 100%)',
+      }}
+    >
+      {/* Film grain effect */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
+        }}
+      />
+      
+      {/* Countdown numbers */}
+      <AnimatePresence mode="wait">
+        {count > 0 && (
+          <motion.div
+            key={count}
+            initial={{ scale: 0, rotate: -180, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            exit={{ scale: 1.5, opacity: 0 }}
+            transition={{ 
+              duration: 0.6, 
+              ease: "easeOut",
+              exit: { duration: 0.2 }
+            }}
+            className="text-white font-bold text-8xl md:text-[12rem] leading-none"
+            style={{
+              fontFamily: 'Impact, Arial Black, sans-serif',
+              textShadow: '0 0 30px rgba(255,255,255,0.5)',
+              filter: 'contrast(1.2)',
+            }}
+          >
+            {count}
+          </motion.div>
+        )}
+        
+        {/* Spinning animation instead of "1" */}
+        {count === 0 && !showEverything && (
+          <motion.div
+            initial={{ scale: 0, rotate: 0 }}
+            animate={{ 
+              scale: [0, 1, 1],
+              rotate: [0, 360, 720],
+            }}
+            transition={{ 
+              duration: 0.8,
+              times: [0, 0.3, 1],
+              ease: "easeOut"
+            }}
+            className="w-24 h-24 md:w-32 md:h-32"
+          >
+            <div className="w-full h-full border-4 border-white border-t-transparent rounded-full animate-spin" 
+                 style={{
+                   boxShadow: '0 0 20px rgba(255,255,255,0.5)',
+                   filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
+                 }} 
+            />
+          </motion.div>
+        )}
+        
+        {/* EVERYTHING text */}
+        {showEverything && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0, rotateY: -90 }}
+            animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+            transition={{ 
+              duration: 0.8,
+              ease: "backOut",
+            }}
+            className="text-[#f3e700] font-bold text-6xl md:text-8xl leading-none tracking-wider"
+            style={{
+              fontFamily: 'Impact, Arial Black, sans-serif',
+              textShadow: '0 0 40px rgba(243, 231, 0, 0.8)',
+              filter: 'contrast(1.2)',
+            }}
+          >
+            EVERYTHING
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Vintage film scratches */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={{ 
+            x: [-10, 10, -5, 15, -10],
+            opacity: [0.1, 0.3, 0.1, 0.4, 0.1]
+          }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+          className="absolute top-0 left-1/4 w-0.5 h-full bg-white opacity-20"
+        />
+        <motion.div
+          animate={{ 
+            x: [5, -8, 12, -3, 5],
+            opacity: [0.2, 0.1, 0.3, 0.1, 0.2]
+          }}
+          transition={{ 
+            duration: 1.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 0.5
+          }}
+          className="absolute top-0 right-1/3 w-px h-full bg-white opacity-15"
+        />
+      </div>
+    </motion.div>
+  )
+}
+
 // Contact Modal Component
 const ContactModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -207,12 +353,17 @@ export default function HomePage() {
   const [isContactOpen, setIsContactOpen] = useState(false)
   const [headerText, setHeaderText] = useState('EVERYTHING')
   const [hoveredBadge, setHoveredBadge] = useState(null)
+  const [showCountdown, setShowCountdown] = useState(true)
+  const [siteLoaded, setSiteLoaded] = useState(false)
   const { scrollYProgress } = useScroll()
 
   // Rotating words array
   const rotatingWords = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
 
   useEffect(() => {
+    // Only start the rotating text after countdown is complete
+    if (!siteLoaded) return
+    
     let index = 0
     const intervalId = setInterval(() => {
       index = (index + 1) % rotatingWords.length
@@ -220,7 +371,12 @@ export default function HomePage() {
     }, 5000)
 
     return () => clearInterval(intervalId)
-  }, [])
+  }, [siteLoaded])
+
+  const handleCountdownComplete = () => {
+    setShowCountdown(false)
+    setTimeout(() => setSiteLoaded(true), 100)
+  }
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
@@ -342,490 +498,504 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#f3e700] text-black min-h-screen font-sans">
-      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-      
-      <div className="fixed inset-0 z-10 pointer-events-none" style={{ opacity: useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1, 0.3, 0.3, 1]) }}>
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} />
-          <Sun />
-        </Canvas>
-      </div>
-
-      <header className="fixed top-0 left-0 w-full z-40 mix-blend-difference">
-        <div className="container mx-auto px-4 py-4 md:py-6">
-          <motion.h1 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-xl md:text-2xl font-bold text-white"
-          >
-            <span className="block">{headerText}</span>
-            <span className="block text-base md:text-lg">Under.the.Sun.</span>
-          </motion.h1>
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="absolute top-4 right-4 text-white p-2"
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={isMenuOpen ? 'close' : 'open'}
-                initial={{ opacity: 0, rotate: -90 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                exit={{ opacity: 0, rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </motion.div>
-            </AnimatePresence>
-          </button>
-        </div>
-      </header>
-
+      {/* Film Countdown Intro */}
       <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="fixed top-0 right-0 w-full md:w-96 h-full bg-black z-50 text-white overflow-y-auto"
-          >
-            <nav className="px-8 py-20">
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="text-white mb-8 flex items-center"
-                aria-label="Back to main content"
-              >
-                <ArrowLeft size={24} className="mr-2" />
-                Back
-              </button>
-              <ul className="space-y-6 text-2xl md:text-3xl font-bold">
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
-                  <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Home
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                  <button onClick={() => scrollToSection('about')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    About
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                  <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Track Record
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                  <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Secret Pipeline
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-                  <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Domain Empire
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                  <button onClick={() => scrollToSection('services')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Services
-                  </button>
-                </motion.li>
-                <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                  <button onClick={() => setIsContactOpen(true)} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                    Contact
-                  </button>
-                </motion.li>
-              </ul>
-            </nav>
-          </motion.div>
+        {showCountdown && (
+          <FilmCountdown onComplete={handleCountdownComplete} />
         )}
       </AnimatePresence>
 
-      <main>
-        <motion.div
-          className="relative z-20"
-          style={{
-            backgroundColor: useTransform(
-              scrollYProgress,
-              [0.2, 0.3, 0.6, 0.7],
-              ['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']
-            ),
-          }}
-        >
-          <section id="home" className="min-h-screen flex items-center justify-center px-4 relative">
-            <div className="text-center">
-              {/* Enhanced Interactive Credibility Badges */}
-              <motion.div 
-                className="mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <div className="flex flex-wrap justify-center gap-4 mb-6">
-                  {credibilityBadges.map((badge, index) => (
-                    <motion.div
-                      key={badge.id}
-                      className={`relative cursor-pointer transition-all duration-300 ${
-                        badge.featured ? 'order-first scale-110' : ''
-                      }`}
-                      onHoverStart={() => setHoveredBadge(badge.id)}
-                      onHoverEnd={() => setHoveredBadge(null)}
-                      whileHover={{ scale: badge.featured ? 1.15 : 1.05 }}
-                    >
-                      <div className={`px-6 py-4 ${badge.bgColor} backdrop-blur-sm rounded-2xl border-2 ${badge.borderColor} ${badge.hoverColor} transition-all duration-300 ${
-                        badge.featured ? 'ring-2 ring-yellow-400/30' : ''
-                      }`}>
-                        <div className="flex items-center space-x-3">
-                          <badge.icon className={`w-6 h-6 ${badge.color}`} />
-                          <div className="text-left">
-                            <div className="text-sm font-bold text-black">{badge.title}</div>
-                            <div className={`text-xs ${badge.color} font-medium`}>{badge.subtitle}</div>
+      {/* Main Site Content - Hidden until countdown completes */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: siteLoaded ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+        className={siteLoaded ? '' : 'pointer-events-none'}
+      >
+        <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+        
+        <div className="fixed inset-0 z-10 pointer-events-none" style={{ opacity: useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1, 0.3, 0.3, 1]) }}>
+          <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1} />
+            <Sun />
+          </Canvas>
+        </div>
+
+        <header className="fixed top-0 left-0 w-full z-40 mix-blend-difference">
+          <div className="container mx-auto px-4 py-4 md:py-6">
+            <motion.h1 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-xl md:text-2xl font-bold text-white"
+            >
+              <span className="block">{headerText}</span>
+              <span className="block text-base md:text-lg">Under.the.Sun.</span>
+            </motion.h1>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="absolute top-4 right-4 text-white p-2"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isMenuOpen ? 'close' : 'open'}
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </motion.div>
+              </AnimatePresence>
+            </button>
+          </div>
+        </header>
+
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="fixed top-0 right-0 w-full md:w-96 h-full bg-black z-50 text-white overflow-y-auto"
+            >
+              <nav className="px-8 py-20">
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-white mb-8 flex items-center"
+                  aria-label="Back to main content"
+                >
+                  <ArrowLeft size={24} className="mr-2" />
+                  Back
+                </button>
+                <ul className="space-y-6 text-2xl md:text-3xl font-bold">
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
+                    <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Home
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                    <button onClick={() => scrollToSection('about')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      About
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+                    <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Track Record
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                    <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Secret Pipeline
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+                    <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Domain Empire
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                    <button onClick={() => scrollToSection('services')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Services
+                    </button>
+                  </motion.li>
+                  <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                    <button onClick={() => setIsContactOpen(true)} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
+                      Contact
+                    </button>
+                  </motion.li>
+                </ul>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <main>
+          <motion.div
+            className="relative z-20"
+            style={{
+              backgroundColor: useTransform(
+                scrollYProgress,
+                [0.2, 0.3, 0.6, 0.7],
+                ['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']
+              ),
+            }}
+          >
+            <section id="home" className="min-h-screen flex items-center justify-center px-4 relative">
+              <div className="text-center">
+                {/* Enhanced Interactive Credibility Badges */}
+                <motion.div 
+                  className="mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <div className="flex flex-wrap justify-center gap-4 mb-6">
+                    {credibilityBadges.map((badge, index) => (
+                      <motion.div
+                        key={badge.id}
+                        className={`relative cursor-pointer transition-all duration-300 ${
+                          badge.featured ? 'order-first scale-110' : ''
+                        }`}
+                        onHoverStart={() => setHoveredBadge(badge.id)}
+                        onHoverEnd={() => setHoveredBadge(null)}
+                        whileHover={{ scale: badge.featured ? 1.15 : 1.05 }}
+                      >
+                        <div className={`px-6 py-4 ${badge.bgColor} backdrop-blur-sm rounded-2xl border-2 ${badge.borderColor} ${badge.hoverColor} transition-all duration-300 ${
+                          badge.featured ? 'ring-2 ring-yellow-400/30' : ''
+                        }`}>
+                          <div className="flex items-center space-x-3">
+                            <badge.icon className={`w-6 h-6 ${badge.color}`} />
+                            <div className="text-left">
+                              <div className="text-sm font-bold text-black">{badge.title}</div>
+                              <div className={`text-xs ${badge.color} font-medium`}>{badge.subtitle}</div>
+                            </div>
                           </div>
+                          
+                          {/* Hover tooltip */}
+                          <AnimatePresence>
+                            {hoveredBadge === badge.id && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                                className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-full bg-black text-white p-3 rounded-lg text-xs max-w-64 z-10 shadow-xl"
+                              >
+                                <div className="text-center">{badge.description}</div>
+                                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
-                        
-                        {/* Hover tooltip */}
-                        <AnimatePresence>
-                          {hoveredBadge === badge.id && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                              className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-full bg-black text-white p-3 rounded-lg text-xs max-w-64 z-10 shadow-xl"
-                            >
-                              <div className="text-center">{badge.description}</div>
-                              <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                <motion.h2 
+                  className="text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
+                  style={{
+                    y: useTransform(scrollYProgress, [0, 0.5], [0, -50]),
+                  }}
+                >
+                  UNDER the SUN
+                  <br />
+                  <span className="text-lg md:text-4xl font-bold text-center leading-tight">
+                    strategy for humanity
+                  </span>
+                </motion.h2>
+              </div>
+            </section>
+
+            {/* Enhanced Track Record Section with Better Contrast */}
+            <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/90 text-white">
+              <div className="container mx-auto max-w-6xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-8 text-center text-white"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Proven Track Record
+                </motion.h3>
+                
+                <div className="grid md:grid-cols-2 gap-8 mb-12">
+                  <motion.div 
+                    className="bg-yellow-500/20 p-6 rounded-2xl border border-yellow-500/40"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <div className="flex items-center mb-4">
+                      <TrendingUp className="w-8 h-8 text-yellow-400 mr-3" />
+                      <h4 className="text-xl font-bold text-white">Revenue Multiplication Expert</h4>
+                    </div>
+                    <p className="text-gray-200 mb-4">
+                      Pioneered, created and implemented hiring and training programs at CheapCaribbean.com during the Greatest Recession since the Great Depression.
+                    </p>
+                    <div className="text-2xl font-bold text-yellow-400 mb-1">$50M → $500M</div>
+                    <div className="text-sm text-yellow-300">10x growth in 5 years (2008-2013)</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-red-500/20 p-6 rounded-2xl border border-red-500/40"
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    <div className="flex items-center mb-4">
+                      <Shield className="w-8 h-8 text-red-400 mr-3" />
+                      <h4 className="text-xl font-bold text-white">Cybersecurity Pioneer</h4>
+                    </div>
+                    <p className="text-gray-200 mb-4">
+                      Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices and platforms.
+                    </p>
+                    <div className="text-lg font-bold text-red-400 mb-1">Nation-State Level Threat Detection</div>
+                    <div className="text-sm text-red-300">Forensic analysis & unconventional discovery techniques</div>
+                  </motion.div>
+                </div>
+              </div>
+            </section>
+
+            {/* Secret Pipeline Section */}
+            <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/80">
+              <div className="container mx-auto max-w-6xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-4 text-center"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Secret Slate Project Pipeline
+                </motion.h3>
+                <motion.p 
+                  className="text-center text-gray-300 mb-12 text-lg"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Four game-changing launches. Some will redefine entire industries.
+                </motion.p>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {secretProjects.map((project, index) => (
+                    <motion.div 
+                      key={project.name}
+                      className="bg-gray-800/50 p-6 rounded-2xl border border-gray-600/30 hover:border-gray-500/50 transition-all"
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <div className="flex items-center mb-4">
+                        <project.icon className="w-8 h-8 text-yellow-400 mr-3" />
+                        <h4 className="text-lg font-bold">{project.name}</h4>
+                        <span className="ml-auto text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
+                          {project.status}
+                        </span>
+                      </div>
+                      <p className="text-gray-300 text-sm">{project.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <motion.div 
+                  className="text-center mt-12"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                  <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
+                    <span className="text-purple-300 font-semibold">Projected Combined Revenue: $40M+ Year 1 $200M+ Year 3</span>
+                  </div>
+                </motion.div>
+              </div>
+            </section>
+
+            {/* Domain Empire Section */}
+            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/70">
+              <div className="container mx-auto max-w-6xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-12 text-center"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Strategic Domain Portfolio
+                </motion.h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {domainPortfolio.map((item, index) => (
+                    <motion.div 
+                      key={item.domain}
+                      className="bg-gray-800/30 p-4 rounded-xl border border-gray-600/20 hover:border-gray-500/40 transition-all"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <div className="text-white font-semibold mb-2 text-sm">{item.domain}</div>
+                      <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 inline-block">
+                        {item.status}
                       </div>
                     </motion.div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
+            </section>
 
-              <motion.h2 
-                className="text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
-                style={{
-                  y: useTransform(scrollYProgress, [0, 0.5], [0, -50]),
-                }}
-              >
-                UNDER the SUN
-                <br />
-                <span className="text-lg md:text-4xl font-bold text-center leading-tight">
-                  strategy for humanity
-                </span>
-              </motion.h2>
-            </div>
-          </section>
-
-          {/* Enhanced Track Record Section with Better Contrast */}
-          <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/90 text-white">
-            <div className="container mx-auto max-w-6xl">
-              <motion.h3
-                className="text-3xl md:text-6xl font-bold mb-8 text-center text-white"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Proven Track Record
-              </motion.h3>
-              
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <motion.div 
-                  className="bg-yellow-500/20 p-6 rounded-2xl border border-yellow-500/40"
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/60">
+              <div className="container mx-auto max-w-4xl">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-6 md:mb-8"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  About Us
+                </motion.h3>
+                <motion.div
+                  className="text-base md:text-xl mb-6 md:mb-8 space-y-4"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <div className="flex items-center mb-4">
-                    <TrendingUp className="w-8 h-8 text-yellow-400 mr-3" />
-                    <h4 className="text-xl font-bold text-white">Revenue Multiplication Expert</h4>
-                  </div>
-                  <p className="text-gray-200 mb-4">
-                    Pioneered, created and implemented hiring and training programs at CheapCaribbean.com during the Greatest Recession since the Great Depression.
+                  <p>
+                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
                   </p>
-                  <div className="text-2xl font-bold text-yellow-400 mb-1">$50M → $500M</div>
-                  <div className="text-sm text-yellow-300">10x growth in 5 years (2008-2013)</div>
+                  <p>
+                    We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
+                  </p>
+                  <p>
+                    Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need .
+                  </p>
                 </motion.div>
+              </div>
+            </section>
+
+            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20 bg-black/50">
+              <div className="text-center">
+                <motion.h3 
+                  className="text-3xl md:text-6xl font-bold mb-8 text-white"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Our Services
+                </motion.h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+                  {services.map((service, index) => (
+                    <motion.div 
+                      key={service.name} 
+                      className="bg-gray-200 flex flex-col items-center justify-center p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <service.icon className="w-12 h-12 md:w-16 md:h-16 mb-4 text-black" />
+                      <h4 className="text-xl md:text-2xl font-bold mb-2 text-black">{service.name}</h4>
+                      <p className="text-sm md:text-base text-black mb-4">{service.description}</p>
+                      <button 
+                        onClick={() => setIsContactOpen(true)}
+                        className="mt-4 inline-block bg-black text-white px-4 py-2 rounded-full font-bold hover:bg-opacity-80 transition-colors"
+                      >
+                        Get Started
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* NEW: Sales Funnel CTA Section with Dynamic Text */}
+            <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/40 text-white">
+              <div className="container mx-auto max-w-4xl text-center">
+                <motion.h3
+                  className="text-3xl md:text-5xl font-bold mb-6"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Ready to 10x Your Business?
+                </motion.h3>
+                
+                <motion.p 
+                  className="text-xl md:text-2xl mb-8 text-gray-200"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  From strategy to execution, we deliver results that matter.
+                </motion.p>
 
                 <motion.div 
-                  className="bg-red-500/20 p-6 rounded-2xl border border-red-500/40"
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  className="grid md:grid-cols-3 gap-6 mb-12"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  <div className="flex items-center mb-4">
-                    <Shield className="w-8 h-8 text-red-400 mr-3" />
-                    <h4 className="text-xl font-bold text-white">Cybersecurity Pioneer</h4>
+                  <div className="bg-gray-800/50 p-6 rounded-xl">
+                    <Brain className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">AI-Powered Strategy</h4>
+                    <p className="text-gray-300 text-sm">Custom solutions that anticipate trends and multiply revenue</p>
                   </div>
-                  <p className="text-gray-200 mb-4">
-                    Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices and platforms.
+                  <div className="bg-gray-800/50 p-6 rounded-xl">
+                    <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">Proven Growth Methods</h4>
+                    <p className="text-gray-300 text-sm">Battle-tested approaches that delivered 10x growth during recession</p>
+                  </div>
+                  <div className="bg-gray-800/50 p-6 rounded-xl">
+                    <Zap className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">Everything Under the Sun</h4>
+                    <p className="text-gray-300 text-sm">Comprehensive solutions from concept to market domination</p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                  <button
+                    onClick={() => setIsContactOpen(true)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
+                  >
+                    Book Your {headerText} Call
+                  </button>
+                  <p className="text-sm text-gray-400 mt-4">
+                    Custom pricing • Optimized solutions • Results GUARANTEED
                   </p>
-                  <div className="text-lg font-bold text-red-400 mb-1">Nation-State Level Threat Detection</div>
-                  <div className="text-sm text-red-300">Forensic analysis & unconventional discovery techniques</div>
+                  <p className="text-sm text-gray-400 mt-4">
+                    Imagine having {headerText} Under the Sun. With us, you've won.
+                  </p>
                 </motion.div>
               </div>
-            </div>
-          </section>
+            </section>
+          </motion.div>
+        </main>
 
-          {/* Secret Pipeline Section */}
-          <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/80">
-            <div className="container mx-auto max-w-6xl">
-              <motion.h3
-                className="text-3xl md:text-6xl font-bold mb-4 text-center"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Secret Slate Project Pipeline
-              </motion.h3>
-              <motion.p 
-                className="text-center text-gray-300 mb-12 text-lg"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                Four game-changing launches. Some will redefine entire industries.
-              </motion.p>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {secretProjects.map((project, index) => (
-                  <motion.div 
-                    key={project.name}
-                    className="bg-gray-800/50 p-6 rounded-2xl border border-gray-600/30 hover:border-gray-500/50 transition-all"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <div className="flex items-center mb-4">
-                      <project.icon className="w-8 h-8 text-yellow-400 mr-3" />
-                      <h4 className="text-lg font-bold">{project.name}</h4>
-                      <span className="ml-auto text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
-                        {project.status}
-                      </span>
-                    </div>
-                    <p className="text-gray-300 text-sm">{project.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div 
-                className="text-center mt-12"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
-                  <span className="text-purple-300 font-semibold">Projected Combined Revenue: $40M+ Year 1 $200M+ Year 3</span>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-
-          {/* Domain Empire Section */}
-          <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/70">
-            <div className="container mx-auto max-w-6xl">
-              <motion.h3
-                className="text-3xl md:text-6xl font-bold mb-12 text-center"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Strategic Domain Portfolio
-              </motion.h3>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {domainPortfolio.map((item, index) => (
-                  <motion.div 
-                    key={item.domain}
-                    className="bg-gray-800/30 p-4 rounded-xl border border-gray-600/20 hover:border-gray-500/40 transition-all"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                  >
-                    <div className="text-white font-semibold mb-2 text-sm">{item.domain}</div>
-                    <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 inline-block">
-                      {item.status}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/60">
-            <div className="container mx-auto max-w-4xl">
-              <motion.h3
-                className="text-3xl md:text-6xl font-bold mb-6 md:mb-8"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                About Us
-              </motion.h3>
-              <motion.div
-                className="text-base md:text-xl mb-6 md:mb-8 space-y-4"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <p>
-                  Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
-                </p>
-                <p>
-                  We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
-                </p>
-                <p>
-                  Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need .
-                </p>
-              </motion.div>
-            </div>
-          </section>
-
-          <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20 bg-black/50">
-            <div className="text-center">
-              <motion.h3 
-                className="text-3xl md:text-6xl font-bold mb-8 text-white"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Our Services
-              </motion.h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                {services.map((service, index) => (
-                  <motion.div 
-                    key={service.name} 
-                    className="bg-gray-200 flex flex-col items-center justify-center p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <service.icon className="w-12 h-12 md:w-16 md:h-16 mb-4 text-black" />
-                    <h4 className="text-xl md:text-2xl font-bold mb-2 text-black">{service.name}</h4>
-                    <p className="text-sm md:text-base text-black mb-4">{service.description}</p>
-                    <button 
-                      onClick={() => setIsContactOpen(true)}
-                      className="mt-4 inline-block bg-black text-white px-4 py-2 rounded-full font-bold hover:bg-opacity-80 transition-colors"
-                    >
-                      Get Started
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* NEW: Sales Funnel CTA Section with Dynamic Text */}
-          <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/40 text-white">
-            <div className="container mx-auto max-w-4xl text-center">
-              <motion.h3
-                className="text-3xl md:text-5xl font-bold mb-6"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Ready to 10x Your Business?
-              </motion.h3>
-              
-              <motion.p 
-                className="text-xl md:text-2xl mb-8 text-gray-200"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                From strategy to execution, we deliver results that matter.
-              </motion.p>
-
-              <motion.div 
-                className="grid md:grid-cols-3 gap-6 mb-12"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <div className="bg-gray-800/50 p-6 rounded-xl">
-                  <Brain className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
-                  <h4 className="text-lg font-bold mb-2">AI-Powered Strategy</h4>
-                  <p className="text-gray-300 text-sm">Custom solutions that anticipate trends and multiply revenue</p>
-                </div>
-                <div className="bg-gray-800/50 p-6 rounded-xl">
-                  <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                  <h4 className="text-lg font-bold mb-2">Proven Growth Methods</h4>
-                  <p className="text-gray-300 text-sm">Battle-tested approaches that delivered 10x growth during recession</p>
-                </div>
-                <div className="bg-gray-800/50 p-6 rounded-xl">
-                  <Zap className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-                  <h4 className="text-lg font-bold mb-2">Everything Under the Sun</h4>
-                  <p className="text-gray-300 text-sm">Comprehensive solutions from concept to market domination</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <button
-                  onClick={() => setIsContactOpen(true)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
-                >
-                  Book Your {headerText} Call
-                </button>
-                <p className="text-sm text-gray-400 mt-4">
-                  Custom pricing • Optimized solutions • Results GUARANTEED
-                </p>
-                <p className="text-sm text-gray-400 mt-4">
-                  Imagine having {headerText} Under the Sun. With us, you've won.
-                </p>
-              </motion.div>
-            </div>
-          </section>
-        </motion.div>
-      </main>
-
-      <div id="shop-our-stores" className="bg-[#f3e700] relative z-10">
-        <div className="container mx-auto px-4 py-12">
-          <button
-            onClick={() => setIsContactOpen(true)}
-            className="w-full md:w-auto px-8 py-4 bg-black text-white rounded-full text-lg font-bold flex items-center justify-center hover:bg-opacity-80 transition-all duration-300"
-          >
-            <ShoppingBag className="mr-2" />
-            Shop Our Store
-          </button>
-        </div>
-      </div>
-
-      <footer className="bg-black text-white py-12 md:py-20 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div className="mb-8 md:mb-0">
-              <h4 className="text-xl md:text-2xl font-bold mb-4">Everything Under the Sun</h4>
-              <p className="text-sm md:text-base">© 2025 Everything Under the Sun. All rights reserved.</p>
-            </div>
-            <nav>
-              <ul className="space-y-2">
-                {footerLinks.map((item, index) => (
-                  <motion.li 
-                    key={item.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <button 
-                      onClick={() => setIsContactOpen(true)}
-                      className="hover:text-[#f3e700] transition-colors text-sm md:text-base"
-                    >
-                      {item.name}
-                    </button>
-                  </motion.li>
-                ))}
-              </ul>
-            </nav>
-          </div>
+        <div id="shop-our-stores" className="bg-[#f3e700] relative z-10">
+          <div className="container mx-auto px-4 py-12">
+            <button
+              onClick={() => setIsContactOpen(true)}
+              className="w-full md:w-auto px-8 py-4 bg-black text-white rounded-full text-lg font-bold flex items-center justify-center hover:bg-opacity-80 transition-all duration-300"
+            >
+              <ShoppingBag className="mr-2" />
+              Shop Our Store
+            </button>
           </div>
         </div>
+
+        <footer className="bg-black text-white py-12 md:py-20 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+              <div className="mb-8 md:mb-0">
+                <h4 className="text-xl md:text-2xl font-bold mb-4">Everything Under the Sun</h4>
+                <p className="text-sm md:text-base">© 2025 Everything Under the Sun. All rights reserved.</p>
+              </div>
+              <nav>
+                <ul className="space-y-2">
+                  {footerLinks.map((item, index) => (
+                    <motion.li 
+                      key={item.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <button 
+                        onClick={() => setIsContactOpen(true)}
+                        className="hover:text-[#f3e700] transition-colors text-sm md:text-base"
+                      >
+                        {item.name}
+                      </button>
+                    </motion.li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </footer>
       </motion.div>
     </div>
   )
