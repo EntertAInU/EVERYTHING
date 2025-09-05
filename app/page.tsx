@@ -10,7 +10,6 @@ const Sun = () => {
   const meshRef = useRef()
   useFrame((state, delta) => {
     meshRef.current.rotation.y += delta * 0.2
-    meshRef.current.rotation.z += delta * 0.1
   })
 
   return (
@@ -18,9 +17,9 @@ const Sun = () => {
       <meshPhongMaterial 
         color="#FFDF0E" 
         emissive="#FFDF0E" 
-        emissiveIntensity={0.8}
+        emissiveIntensity={0.7}
         specular="#ffffff"
-        shininess={5}
+        shininess={3}
       />
     </Sphere>
   )
@@ -383,19 +382,8 @@ export default function HomePage() {
   const [aboutExpanded, setAboutExpanded] = useState(false)
   const { scrollYProgress } = useScroll()
 
-  // Scroll-based background color transform
-  const backgroundColor = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
-    [
-      'rgb(243, 231, 0)', // Yellow
-      'rgb(255, 140, 0)', // Orange
-      'rgb(255, 69, 0)',  // Red-orange
-      'rgb(138, 43, 226)', // Blue-violet
-      'rgb(75, 0, 130)',   // Indigo
-      'rgb(0, 0, 0)'       // Black
-    ]
-  )
+  // Simple yellow background like the original
+  const backgroundColor = useTransform(scrollYProgress, [0, 1], ['#f3e700', '#f3e700'])
 
   const rotatingWords = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
 
@@ -565,9 +553,8 @@ export default function HomePage() {
         {/* Enhanced 3D Sun */}
         <div className="fixed inset-0 z-10 pointer-events-none" style={{ opacity: useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1, 0.3, 0.3, 1]) }}>
           <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <ambientLight intensity={0.6} />
-            <pointLight position={[10, 10, 10]} intensity={1.2} />
-            <pointLight position={[-10, -10, -10]} intensity={0.8} color="#ff6600" />
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1} />
             <Sun />
           </Canvas>
         </div>
@@ -662,7 +649,7 @@ export default function HomePage() {
               backgroundColor: useTransform(
                 scrollYProgress,
                 [0.2, 0.3, 0.6, 0.7],
-                ['rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0)']
+                ['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']
               ),
             }}
           >
