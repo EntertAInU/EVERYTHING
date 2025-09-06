@@ -603,7 +603,7 @@ export default function HomePage() {
                 <ul className="space-y-6 text-2xl md:text-3xl font-bold">
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
                     <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Home
+                      Sun with Bubbles
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -618,22 +618,22 @@ export default function HomePage() {
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                     <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Strategic Domains
+                      Strategic Domain Portfolio
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                     <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Use Cases
+                      Proven Track Record
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                     <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Secret Pipeline
+                      Secret Slate Project Pipeline
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
                     <button onClick={() => scrollToSection('contact-cta')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Inquiries
+                      Ready for Everything?
                     </button>
                   </motion.li>
                 </ul>
@@ -680,8 +680,8 @@ export default function HomePage() {
                         repeatDelay: 6
                       }}
                       onClick={() => {
-                        if (bubble.text === "Future Focused & Prepared") scrollToSection('track-record')
-                        if (bubble.text === "Secret Global Projects") scrollToSection('secret-pipeline')
+                        if (bubble.text === "Track Records") scrollToSection('track-record')
+                        if (bubble.text === "Secret Projects") scrollToSection('secret-pipeline')
                         if (bubble.text === "Hidden Gems") scrollToSection('about')
                       }}
                     >
@@ -906,13 +906,13 @@ export default function HomePage() {
                   >
                     <div className="flex items-center mb-4">
                       <Shield className="w-8 h-8 text-red-400 mr-3" />
-                      <h4 className="text-xl font-bold text-white">Cyberforensic Data Expert</h4>
+                      <h4 className="text-xl font-bold text-white">Cybersecurity Pioneer</h4>
                     </div>
                     <p className="text-gray-200 mb-4">
-                      Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices, systems and platforms.
+                      Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices and platforms.
                     </p>
                     <div className="text-lg font-bold text-red-400 mb-1">Nation-State Level Threat Detection</div>
-                    <div className="text-sm text-red-300">Forensic analysis & highly advanced unconventional discovery techniques</div>
+                    <div className="text-sm text-red-300">Forensic analysis & unconventional discovery techniques</div>
                   </motion.div>
                 </div>
               </div>
@@ -966,7 +966,7 @@ export default function HomePage() {
                   transition={{ duration: 0.5, delay: 0.5 }}
                 >
                   <div className="inline-flex items-center px-6 py-3 bg-purple-500/20 rounded-full border border-purple-500/30">
-                    <span className="text-purple-300 font-semibold">Combined Revenue Projection: $40M+ Year 1 $200M+ Year 3</span>
+                    <span className="text-purple-300 font-semibold">Projected Combined Revenue: $40M+ Year 1 $200M+ Year 3</span>
                   </div>
                 </motion.div>
               </div>
@@ -981,7 +981,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  Ready For Everything?
+                  Ready for Everything?
                 </motion.h3>
                 
                 <motion.p 
@@ -990,7 +990,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Rapid growth changes everything! From strategy to execution, we prepare you for the massive results we bring.
+                  From strategy to execution, we deliver results that matter.
                 </motion.p>
 
                 <motion.div 
@@ -1007,12 +1007,12 @@ export default function HomePage() {
                   <div className="bg-gray-800/50 p-6 rounded-xl">
                     <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-4" />
                     <h4 className="text-lg font-bold mb-2">Proven Growth Methods</h4>
-                    <p className="text-gray-300 text-sm">Battle-tested approaches that deliver growth during recessions</p>
+                    <p className="text-gray-300 text-sm">Battle-tested approaches that delivered growth during recession</p>
                   </div>
                   <div className="bg-gray-800/50 p-6 rounded-xl">
                     <Zap className="w-12 h-12 text-purple-400 mx-auto mb-4" />
                     <h4 className="text-lg font-bold mb-2">Everything Under the Sun</h4>
-                    <p className="text-gray-300 text-sm">Comprehensive strategy and solutions from concept to market domination</p>
+                    <p className="text-gray-300 text-sm">Comprehensive solutions from concept to market domination</p>
                   </div>
                 </motion.div>
 
@@ -1025,13 +1025,10 @@ export default function HomePage() {
                     onClick={() => setIsContactOpen(true)}
                     className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
                   >
-                    Book Your EVERYTHING Call Now!
+                    Book Your {headerText} Call Now!
                   </button>
-                  <p className="text-sm text-gray-600 mt-4">
-                    If you are ready to transform your business, launch breakthrough technology, or solve humanity's challenges, we're ready to make it happen.
-                  </p>
-                  <p className="text-sm text-gray-800 font-bold mt-4">
-                   The future doesn't wait.
+                  <p className="text-sm text-gray-400 mt-4">
+                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it happen.
                   </p>
                 </motion.div>
               </div>
