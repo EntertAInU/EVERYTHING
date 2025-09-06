@@ -382,9 +382,6 @@ export default function HomePage() {
   const [aboutExpanded, setAboutExpanded] = useState(false)
   const { scrollYProgress } = useScroll()
 
-  // Simple yellow background like the original
-  const backgroundColor = useTransform(scrollYProgress, [0, 1], ['#f3e700', '#f3e700'])
-
   const rotatingWords = ['EVERYTHING', 'STRATEGY', 'CREATING', 'OPTIMIZING', 'MONETIZING', 'TECHNOLOGY', 'ENTERTAINMENT']
 
   useEffect(() => {
@@ -527,10 +524,7 @@ export default function HomePage() {
   ]
 
   return (
-    <motion.div 
-      className="text-black min-h-screen font-sans"
-      style={{ backgroundColor }}
-    >
+    <div className="bg-[#f3e700] text-black min-h-screen font-sans">
       <AnimatePresence>
         {showCountdown && (
           <FilmCountdown onComplete={handleCountdownComplete} />
@@ -551,7 +545,7 @@ export default function HomePage() {
         <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
         
         {/* Enhanced 3D Sun */}
-        <div className="fixed inset-0 z-10 pointer-events-none" style={{ opacity: useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1, 0.3, 0.3, 1]) }}>
+        <div className="fixed inset-0 z-0 pointer-events-none">
           <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} intensity={1} />
@@ -644,7 +638,6 @@ export default function HomePage() {
 
         <main>
           <motion.div
-            className="relative z-20"
             style={{
               backgroundColor: useTransform(
                 scrollYProgress,
@@ -754,7 +747,7 @@ export default function HomePage() {
             </section>
 
             {/* About Us Section - Moved up as requested */}
-            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/60">
+            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-4xl">
                 <motion.h3
                   className="text-3xl md:text-6xl font-bold mb-6 md:mb-8"
@@ -794,7 +787,7 @@ export default function HomePage() {
             </section>
 
             {/* Services Section */}
-            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20 bg-black/50">
+            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20">
               <div className="text-center">
                 <motion.h3 
                   className="text-3xl md:text-6xl font-bold mb-8 text-white"
@@ -829,7 +822,7 @@ export default function HomePage() {
             </section>
 
             {/* Strategic Domain Portfolio */}
-            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/70">
+            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3
                   className="text-3xl md:text-6xl font-bold mb-12 text-center"
@@ -869,7 +862,7 @@ export default function HomePage() {
             </section>
 
             {/* Proven Track Record Section */}
-            <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/90 text-white">
+            <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3
                   className="text-3xl md:text-6xl font-bold mb-8 text-center text-white"
@@ -919,7 +912,7 @@ export default function HomePage() {
             </section>
 
             {/* Secret Pipeline Section */}
-            <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white bg-black/80">
+            <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3
                   className="text-3xl md:text-6xl font-bold mb-4 text-center"
@@ -973,7 +966,7 @@ export default function HomePage() {
             </section>
 
             {/* Ready for Everything Section - Updated CTA */}
-            <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 bg-black/40 text-white">
+            <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-4xl text-center">
                 <motion.h3
                   className="text-3xl md:text-5xl font-bold mb-6"
@@ -1036,7 +1029,7 @@ export default function HomePage() {
           </motion.div>
         </main>
 
-        <div id="shop-our-stores" className="relative z-10" style={{ backgroundColor: useTransform(scrollYProgress, [0.95, 1], ['rgb(243, 231, 0)', 'rgb(243, 231, 0)']) }}>
+        <div id="shop-our-stores" className="bg-[#f3e700] relative z-10">
           <div className="container mx-auto px-4 py-12">
             <button
               onClick={() => setIsContactOpen(true)}
@@ -1078,6 +1071,6 @@ export default function HomePage() {
           </div>
         </footer>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }
