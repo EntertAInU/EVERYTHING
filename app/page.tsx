@@ -1,4 +1,126 @@
-"use client"
+{/* Secret Pipeline Section */}
+            <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white relative">
+              <div className="absolute inset-0 bg-black/30 md:bg-black/0"></div>
+              <div className="container mx-auto max-w-6xl relative z-10">
+                <motion.h3
+                  className="text-3xl md:text-6xl font-bold mb-4 text-center text-gray-100"
+                  style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Secret Slate Project Pipeline
+                </motion.h3>
+                <motion.p 
+                  className="text-center text-gray-100 mb-12 text-lg"
+                  style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Four game-changing launches. Some will redefine entire industries.
+                </motion.p>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {secretProjects.map((project, index) => (
+                    <motion.div 
+                      key={project.name}
+                      className="bg-gray-800/70 p-6 rounded-2xl border border-gray-600/30 hover:border-gray-500/50 transition-all backdrop-blur-sm"
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <div className="flex items-center mb-4">
+                        <project.icon className="w-8 h-8 text-yellow-400 mr-3" />
+                        <h4 className="text-lg font-bold">{project.name}</h4>
+                        <span className="ml-auto text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
+                          {project.status}
+                        </span>
+                      </div>
+                      <p className="text-gray-200 text-sm">{project.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <motion.div 
+                  className="text-center mt-12"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                  <div className="inline-flex items-center px-6 py-3 bg-purple-500/30 rounded-full border border-purple-500/40 backdrop-blur-sm">
+                    <span className="text-gray-100 font-semibold" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>Projected Combined Revenue: $40M+ Year 1 $200M+ Year 3</span>
+                  </div>
+                </motion.div>
+              </div>
+            </section>
+
+            {/* Ready for Everything Section - Updated CTA */}
+            <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white relative">
+              <div className="absolute inset-0 bg-black/30 md:bg-black/0"></div>
+              <div className="container mx-auto max-w-4xl text-center relative z-10">
+                <motion.h3
+                  className="text-3xl md:text-5xl font-bold mb-6 text-gray-100"
+                  style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Ready for Everything?
+                </motion.h3>
+                
+                <motion.p 
+                  className="text-xl md:text-2xl mb-8 text-gray-100"
+                  style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  From strategy to execution, we deliver results that matter.
+                </motion.p>
+
+                <motion.div 
+                  className="grid md:grid-cols-3 gap-6 mb-12"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <div className="bg-gray-800/70 p-6 rounded-xl backdrop-blur-sm">
+                    <Brain className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">AI-Powered Strategy</h4>
+                    <p className="text-gray-200 text-sm">Custom solutions that anticipate trends and multiply revenue</p>
+                  </div>
+                  <div className="bg-gray-800/70 p-6 rounded-xl backdrop-blur-sm">
+                    <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">Proven Growth Methods</h4>
+                    <p className="text-gray-200 text-sm">Battle-tested approaches that delivered growth during recession</p>
+                  </div>
+                  <div className="bg-gray-800/70 p-6 rounded-xl backdrop-blur-sm">
+                    <Zap className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+                    <h4 className="text-lg font-bold mb-2">Everything Under the Sun</h4>
+                    <p className="text-gray-200 text-sm">Comprehensive solutions from concept to market domination</p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                  <button
+                    onClick={() => setIsContactOpen(true)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-2xl"
+                  >
+                    Book Your {headerText} Call Now!
+                  </button>
+                  <p className="text-sm text-gray-300 mt-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
+                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it happen.
+                  </p>
+                </motion.div>
+              </div>
+            </section>
+          </motion.div>
+        </main>"use client"
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
