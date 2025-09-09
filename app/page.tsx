@@ -582,7 +582,7 @@ export default function HomePage() {
                 <ul className="space-y-6 text-2xl md:text-3xl font-bold">
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
                     <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Sun with Bubbles
+                      Home - Under the Sun
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -597,22 +597,22 @@ export default function HomePage() {
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                     <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Strategic Domain Portfolio
+                      Strategic Domains
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                     <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Proven Track Record
+                      Use Cases
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                     <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Secret Slate Project Pipeline
+                      Secret Slate
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
                     <button onClick={() => scrollToSection('contact-cta')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Ready for Everything?
+                      Ready for... Everything
                     </button>
                   </motion.li>
                 </ul>
@@ -667,7 +667,6 @@ export default function HomePage() {
                     </motion.div>
                   ))}
                 </div>
-
 
                 {/* Enhanced Interactive Credibility Badges */}
                 <motion.div 
@@ -1059,4 +1058,3 @@ export default function HomePage() {
       </motion.div>
     </div>
   )
-}
