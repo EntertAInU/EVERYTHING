@@ -1,12 +1,23 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Menu, X, ArrowLeft, Brain, Film, Leaf, BarChart3, ShoppingBag, Shield, TrendingUp, Zap, Mic, Bot, Star, Calendar, Mail, MessageSquare, Phone } from 'lucide-react'
 
 // Celebration Component for Logo Click
 const CelebrationOverlay = ({ isVisible, onComplete }) => {
   const [showJustKidding, setShowJustKidding] = useState(false)
+
+  // Generate confetti info ONCE per component mount
+  const confettiData = useMemo(() =>
+    Array.from({ length: 50 }).map((_, i) => ({
+      color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'][i % 5],
+      left: `${Math.random() * 100}%`,
+      x: [0, Math.random() * 100 - 50],
+      duration: 3 + Math.random() * 2,
+      delay: Math.random() * 2,
+    }))
+  , [])
 
   useEffect(() => {
     if (isVisible) {
@@ -37,23 +48,23 @@ const CelebrationOverlay = ({ isVisible, onComplete }) => {
     >
       {/* Confetti */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(50)].map((_, i) => (
+        {confettiData.map((data, i) => (
           <motion.div
             key={i}
             className="absolute w-3 h-3 rounded-full"
             style={{
-              backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'][i % 5],
-              left: `${Math.random() * 100}%`,
+              backgroundColor: data.color,
+              left: data.left,
               top: '-10px'
             }}
             animate={{
               y: '110vh',
               rotate: 360,
-              x: [0, Math.random() * 100 - 50]
+              x: data.x
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
-              delay: Math.random() * 2,
+              duration: data.duration,
+              delay: data.delay,
               repeat: Infinity
             }}
           />
@@ -65,7 +76,7 @@ const CelebrationOverlay = ({ isVisible, onComplete }) => {
         animate={{ scale: 1, rotate: 0 }}
         className="text-black font-bold text-4xl md:text-6xl text-center mb-4"
       >
-        {showJustKidding ? "JUST KIDDING!" : "CONGRATULATIONS! YOU ARE..."}
+        {showJustKidding ? "JUST KIDDING!" : "CONGRATULATIONS! YOU ARE THE LUCKIEST PERSON IN THE WORLD!"}
       </motion.div>
       
       <motion.div
@@ -118,7 +129,7 @@ const FilmCountdown = ({ onComplete }) => {
       <div 
         className="absolute inset-0 opacity-30"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
         }}
       />
       
@@ -749,15 +760,15 @@ export default function HomePage() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   <p className="mb-4">
-                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
+                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, h[...]
                   </p>
                   
                   <div className={`overflow-hidden transition-all duration-500 ${aboutExpanded ? 'max-h-96' : 'max-h-0'}`}>
                     <p className="mb-4">
-                      We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
+                      We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. St[...]
                     </p>
                     <p className="mb-4">
-                      Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need.
+                      Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a[...]
                     </p>
                   </div>
                   
@@ -786,7 +797,7 @@ export default function HomePage() {
                   {services.map((service, index) => (
                     <motion.div 
                       key={service.name} 
-                      className="bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 border border-yellow-400/20"
+                      className="bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 border bo[...]
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -824,7 +835,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Our carefully curated collection of premium domains positions us at the forefront of emerging markets and technologies. Each acquisition represents a strategic investment in the future of digital innovation.
+                  Our carefully curated collection of premium domains positions us at the forefront of emerging markets and technologies. Each acquisition represents a strategic investment in the futu[...]
                 </motion.p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1006,7 +1017,7 @@ export default function HomePage() {
                     Book Your {headerText} Call Now!
                   </button>
                   <p className="text-sm text-gray-400 mt-4">
-                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it happen.
+                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it[...]
                   </p>
                 </motion.div>
               </div>
@@ -1058,3 +1069,4 @@ export default function HomePage() {
       </motion.div>
     </div>
   )
+}
