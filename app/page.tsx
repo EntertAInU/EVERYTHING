@@ -191,6 +191,25 @@ const FilmCountdown = ({ onComplete }) => {
   )
 }
 
+const Sun = () => {
+  const meshRef = useRef()
+  useFrame((state, delta) => {
+    meshRef.current.rotation.y += delta * 0.2
+  })
+
+  return (
+    <Sphere ref={meshRef} args={[2.7, 32, 32]}>
+      <meshPhongMaterial 
+        color="#FFDF0E" 
+        emissive="#FFDF0E" 
+        emissiveIntensity={0.7}
+        specular="#ffffff"
+        shininess={3}
+      />
+    </Sphere>
+  )
+}
+
 // Contact Modal Component
 const ContactModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -464,7 +483,7 @@ export default function HomePage() {
       icon: Shield,
       title: 'Nation-State Security Expert',
       subtitle: 'Advanced Threat Detection',
-      description: 'Discovered and mitigated sophisticated nation-state level cyber threats using unconventional forensic techniques.',
+      description: 'Discovered and mitigated sophisticated nation-state level digital threats using traditional and unconventional forensic techniques.',
       color: 'text-red-400',
       bgColor: 'bg-red-500/10',
       borderColor: 'border-red-500/20',
@@ -582,7 +601,7 @@ export default function HomePage() {
                 <ul className="space-y-6 text-2xl md:text-3xl font-bold">
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
                     <button onClick={() => scrollToSection('home')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Sun with Bubbles
+                      Home - Under the Sun
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -597,22 +616,22 @@ export default function HomePage() {
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                     <button onClick={() => scrollToSection('domain-empire')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Strategic Domain Portfolio
+                      Strategic Domains
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                     <button onClick={() => scrollToSection('track-record')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Proven Track Record
+                      Use Cases
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                     <button onClick={() => scrollToSection('secret-pipeline')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Secret Slate Project Pipeline
+                      Secret Slate
                     </button>
                   </motion.li>
                   <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
                     <button onClick={() => scrollToSection('contact-cta')} className="hover:text-[#f3e700] transition-colors block py-2 text-left">
-                      Ready for Everything?
+                      Contact for... Everything
                     </button>
                   </motion.li>
                 </ul>
@@ -749,15 +768,15 @@ export default function HomePage() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   <p className="mb-4">
-                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. Making problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations, and having resources available globally helps us handle any need. Have a problem you would like us to solve?
+                    Everything Under the Sun (EUtS), founded in early 2019, is a visionary company building brands, creative strategies, and developing technology solutions. We make problems go away, helping others excel while harnessing the power of AI and ML to drive even more impressive problem-solving innovations. Having resources available globally helps us respond immediately, effectively and discretely to handle any need. Have a problem you would like us to solve?
                   </p>
                   
                   <div className={`overflow-hidden transition-all duration-500 ${aboutExpanded ? 'max-h-96' : 'max-h-0'}`}>
                     <p className="mb-4">
-                      We love brands and inspiring people who are great at what they do and share common values: helping humanity and our planet stop the nonsense and improve, so we can all thrive. Strategizing and defining how data can be used for good and profit are a couple of ways we help better than anyone else.
+                      Now is the time to help the right businesses experience growth, brands become recognized and inspiring people get more eyes on what they are great doing. AI, Automations, Optimization of current automations, and building customizable and scalable solutions for the future are just a few reasons to hire our team. Strategizing, optimizing and demonstrating how your brand recognition can be using data for great things. In a world which people only know and expect the opposite, to create the environment needed to organically stimulate and fuel your brand's reputation and rapid growth, with loyal and happy customers and even happier employees...well, that is how we can genuinely help any business, better than anyone else.
                     </p>
                     <p className="mb-4">
-                      Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Your global collection of masterminds to do things right when you need.
+                      Our strategic partnerships and incubator bring together industry experts, research, and experience to push the boundaries of what's possible. With cutting-edge technologies and a relentless commitment to excellence, we've positioned ourselves alongside industry leaders in AI research, development, and go-to-market solutions. Making money is the easy part; helping humanity and our planet stop the nonsense and improve, so we can all thrive, takes teamwork. Every client and partner we have worked with will echo that we offer a global collection of masterminds to solve any problem, and do things right, when that is exactly what you need. Reach out.
                     </p>
                   </div>
                   
@@ -824,7 +843,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Our carefully curated collection of premium domains positions us at the forefront of emerging markets and technologies. Each acquisition represents a strategic investment in the future of digital innovation.
+                  Our carefully curated collection of premium domains positions us at the forefront of emerging markets and technologies. Each acquisition represents a strategic investment in our future. These show a roadmap for some of our planned digital innovations.
                 </motion.p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -867,13 +886,13 @@ export default function HomePage() {
                   >
                     <div className="flex items-center mb-4">
                       <TrendingUp className="w-8 h-8 text-yellow-400 mr-3" />
-                      <h4 className="text-xl font-bold text-white">Revenue Multiplication Expert</h4>
+                      <h4 className="text-xl font-bold text-white">Revenue Multiplication Expertise</h4>
                     </div>
                     <p className="text-gray-200 mb-4">
                       Pioneered, created and implemented hiring and training programs at CheapCaribbean.com during the Greatest Recession since the Great Depression.
                     </p>
                     <div className="text-2xl font-bold text-yellow-400 mb-1">$50M → $500M</div>
-                    <div className="text-sm text-yellow-300">Growth achieved in 5 years (2008-2013)</div>
+                    <div className="text-sm text-yellow-300">ACTUAL 10X growth achieved in 5 years (2008-2013)</div>
                   </motion.div>
 
                   <motion.div 
@@ -884,10 +903,10 @@ export default function HomePage() {
                   >
                     <div className="flex items-center mb-4">
                       <Shield className="w-8 h-8 text-red-400 mr-3" />
-                      <h4 className="text-xl font-bold text-white">Cybersecurity Pioneer</h4>
+                      <h4 className="text-xl font-bold text-white">Digital Forensics & Device Security Honors</h4>
                     </div>
                     <p className="text-gray-200 mb-4">
-                      Discovered and provided successful mitigation for nation-state level, persistent, extremely sophisticated malicious exploits across devices and platforms.
+                      Discover and provide evidence paired with successful mitigation steps for nation-state level, persistent, extremely sophisticated malicious exploits and surveillance across all systems, devices and platforms.
                     </p>
                     <div className="text-lg font-bold text-red-400 mb-1">Nation-State Level Threat Detection</div>
                     <div className="text-sm text-red-300">Forensic analysis & unconventional discovery techniques</div>
@@ -1006,7 +1025,7 @@ export default function HomePage() {
                     Book Your {headerText} Call Now!
                   </button>
                   <p className="text-sm text-gray-400 mt-4">
-                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, we're ready to make it happen.
+                    The future doesn't wait. Whether you're looking to transform your business, launch the next breakthrough technology, or solve humanity's greatest challenges, contact us to make it happen.
                   </p>
                 </motion.div>
               </div>
