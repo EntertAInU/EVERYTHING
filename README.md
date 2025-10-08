@@ -1,4 +1,4 @@
-# Everything Under the Sun Clone
+# Everything Under the Sun
 
 *Automatically synced with your [v0.dev](https://v0.dev) deployments*
 
