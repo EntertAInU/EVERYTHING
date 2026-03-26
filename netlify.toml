@@ -1,11 +1,11 @@
-# Netlify configuration for Everything Under the Sun
-# Security headers, redirects, and build settings
-
 [build]
-  command = "pnpm build"
-  publish = ".next"
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = "out"
 
-# Force HTTPS
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
 [[redirects]]
   from = "http://everythingarti.org/*"
   to = "https://everythingarti.org/:splat"
@@ -18,7 +18,6 @@
   status = 301
   force = true
 
-# Security Headers - all routes
 [[headers]]
   for = "/*"
   [headers.values]
@@ -29,12 +28,6 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://libertadai.com https://everythingis.online https://everythingisawesome.org; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
-
-# Cache static assets aggressively
-[[headers]]
-  for = "/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/_next/static/*"
