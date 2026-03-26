@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFDF0E"/>
+      <stop offset="100%" stop-color="#F3A600"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="30" fill="url(#sun)"/>
+  <g fill="#FFDF0E" opacity="0.9">
+    <rect x="47" y="5" width="6" height="15" rx="3"/>
+    <rect x="47" y="80" width="6" height="15" rx="3"/>
+    <rect x="5" y="47" width="15" height="6" rx="3"/>
+    <rect x="80" y="47" width="15" height="6" rx="3"/>
+    <rect x="17" y="17" width="6" height="15" rx="3" transform="rotate(45 20 24.5)"/>
+    <rect x="77" y="68" width="6" height="15" rx="3" transform="rotate(45 80 75.5)"/>
+    <rect x="68" y="17" width="15" height="6" rx="3" transform="rotate(45 75.5 20)"/>
+    <rect x="17" y="77" width="15" height="6" rx="3" transform="rotate(45 24.5 80)"/>
+  </g>
+</svg>
