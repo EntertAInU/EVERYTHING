@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Menu, X, ArrowLeft, Brain, Film, Leaf, BarChart3, ShoppingBag, Shield, TrendingUp, Zap, Mic, Bot, Star, Calendar, Mail, MessageSquare, Phone, Lock, Eye, Cpu, Server, Fingerprint, KeyRound } from 'lucide-react'
+import SunSceneLoader from '@/components/sun/SunSceneLoader'
+import VentureIndex from '@/components/VentureIndex'
 
 // ==========================================
 // CELEBRATION OVERLAY (Logo Easter Egg)
@@ -273,7 +275,7 @@ const ContactModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
     }
 
     try {
-      const response = await fetch('/', {
+      const response = await fetch('/__forms.html', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -493,12 +495,8 @@ export default function HomePage() {
         <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
         <LibertadPortal isOpen={isPortalOpen} onClose={() => setIsPortalOpen(false)} />
 
-        {/* Animated Background Sun */}
-        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center">
-          <motion.div className="w-96 h-96 bg-gradient-radial from-yellow-300 via-yellow-400 to-yellow-500 rounded-full opacity-60"
-            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-            transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } }} />
-        </div>
+        {/* 3D Sun + orbiting ventures */}
+        <SunSceneLoader scrollYProgress={scrollYProgress} />
 
         {/* HEADER */}
         <header className="fixed top-0 left-0 w-full z-40 mix-blend-difference">
@@ -530,6 +528,7 @@ export default function HomePage() {
                 <ul className="space-y-6 text-2xl md:text-3xl font-bold">
                   {[
                     { label: 'Home - Under the Sun', id: 'home' },
+                    { label: 'Our Ventures', id: 'ventures' },
                     { label: 'About Us', id: 'about' },
                     { label: 'Digital Sovereignty', id: 'digital-sovereignty' },
                     { label: 'Our Services', id: 'services' },
@@ -555,13 +554,13 @@ export default function HomePage() {
         </AnimatePresence>
 
         {/* MAIN CONTENT */}
-        <main>
+        <main className="relative z-10 pointer-events-none">
           <motion.div style={{
             backgroundColor: useTransform(scrollYProgress, [0.15, 0.25, 0.65, 0.75], ['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']),
           }}>
 
             {/* ===== HERO ===== */}
-            <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+            <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden pointer-events-none">
               <div className="text-center relative">
                 <div className="absolute inset-0 pointer-events-none">
                   {sunBubbles.map((bubble, index) => (
@@ -581,7 +580,7 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+                <motion.div className="mb-8 pointer-events-auto" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
                   <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-6">
                     {credibilityBadges.map((badge) => (
                       <motion.div key={badge.id}
@@ -611,7 +610,7 @@ export default function HomePage() {
                   </div>
                 </motion.div>
 
-                <motion.h2 className="text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
+                <motion.h2 className="pointer-events-auto text-2xl md:text-6xl font-bold text-center leading-tight opacity-0 hover:opacity-30 transition-opacity duration-300"
                   style={{ y: useTransform(scrollYProgress, [0, 0.5], [0, -50]) }}>
                   UNDER the SUN<br />
                   <span className="text-lg md:text-4xl font-bold text-center leading-tight">strategy for humanity</span>
@@ -619,8 +618,11 @@ export default function HomePage() {
               </div>
             </section>
 
+            {/* ===== VENTURES (readable twin of the orbit) ===== */}
+            <VentureIndex />
+
             {/* ===== ABOUT US ===== */}
-            <section id="about" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="about" className="pointer-events-auto min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-4xl">
                 <motion.h3 className="text-3xl md:text-6xl font-bold mb-6 md:mb-8" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   About Us
@@ -646,7 +648,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== DIGITAL SOVEREIGNTY — NEW SECTION ===== */}
-            <section id="digital-sovereignty" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="digital-sovereignty" className="pointer-events-auto min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   <p className="text-yellow-400 text-sm font-bold tracking-widest uppercase mb-4">Architectural Sovereignty</p>
@@ -693,7 +695,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== SERVICES ===== */}
-            <section id="services" className="min-h-screen flex items-center justify-center px-4 py-16 md:py-20">
+            <section id="services" className="pointer-events-auto min-h-screen flex items-center justify-center px-4 py-16 md:py-20">
               <div className="text-center">
                 <motion.h3 className="text-3xl md:text-6xl font-bold mb-8 text-white" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   Our Services
@@ -717,7 +719,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== DOMAIN PORTFOLIO ===== */}
-            <section id="domain-empire" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="domain-empire" className="pointer-events-auto min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3 className="text-3xl md:text-6xl font-bold mb-12 text-center" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   Strategic Domain Portfolio
@@ -743,7 +745,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== TRACK RECORD ===== */}
-            <section id="track-record" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="track-record" className="pointer-events-auto overflow-hidden min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3 className="text-3xl md:text-6xl font-bold mb-8 text-center text-white" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   Proven Track Record
@@ -774,7 +776,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== SECRET PIPELINE ===== */}
-            <section id="secret-pipeline" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="secret-pipeline" className="pointer-events-auto min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-6xl">
                 <motion.h3 className="text-3xl md:text-6xl font-bold mb-4 text-center" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   Secret Slate Project Pipeline
@@ -805,7 +807,7 @@ export default function HomePage() {
             </section>
 
             {/* ===== CTA ===== */}
-            <section id="contact-cta" className="min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
+            <section id="contact-cta" className="pointer-events-auto min-h-screen flex flex-col justify-center px-4 py-16 md:py-20 text-white">
               <div className="container mx-auto max-w-4xl text-center">
                 <motion.h3 className="text-3xl md:text-5xl font-bold mb-6" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   Ready for Everything?

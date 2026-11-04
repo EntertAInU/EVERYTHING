@@ -3,6 +3,5 @@ Allow: /
 
 Sitemap: https://everythingarti.org/sitemap.xml
 
-# Block sensitive paths
+# Keep /_next/ crawlable so search engines and AI crawlers can render the page
 Disallow: /api/
-Disallow: /_next/

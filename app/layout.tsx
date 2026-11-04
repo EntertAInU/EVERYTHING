@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
+import { ventures, isExternal } from '@/lib/ventures'
 
 export const metadata: Metadata = {
   title: 'Everything Under the Sun | AI Strategy · Digital Sovereignty · Creative Innovation',
@@ -80,9 +81,20 @@ export default function RootLayout({
     foundingDate: '2019',
     founder: {
       '@type': 'Person',
-      name: 'Blaise',
+      name: 'Blaise D.',
       jobTitle: 'CEO & Founder',
     },
+    subOrganization: {
+      '@type': 'Organization',
+      name: 'Everything Under the Sun d.o.o.',
+      address: { '@type': 'PostalAddress', addressLocality: 'Vela Luka, Korčula', addressCountry: 'HR' },
+    },
+    brand: ventures.map((v) => ({
+      '@type': 'Brand',
+      name: v.name,
+      description: v.oneLiner,
+      url: isExternal(v.href) ? v.href : `https://everythingarti.org/${v.href}`,
+    })),
     address: [
       {
         '@type': 'PostalAddress',
